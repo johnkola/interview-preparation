@@ -1,0 +1,8 @@
+rootProject.name = 'java-interview'
+
+// Enable Gradle build cache
+buildCache {
+    local {
+        enabled = true
+    }
+}

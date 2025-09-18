@@ -1,0 +1,197 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+group = 'com.interview'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JUnit 5 for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
+
+    // AssertJ for fluent assertions
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
+    // Mockito for mocking (useful for interviews)
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+}
+
+mainClassName = 'com.interview.concurrency.ConcurrencyRunner'
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:unchecked', '-Xlint:deprecation']
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+
+    maxHeapSize = "1g"
+}
+
+// Custom tasks for running specific examples
+task runThreadCreation(type: JavaExec) {
+    main = 'com.interview.concurrency.basics.ThreadCreation'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Thread Creation examples'
+    group = 'interview-examples'
+}
+
+task runThreadSafeCounters(type: JavaExec) {
+    main = 'com.interview.concurrency.synchronization.ThreadSafeCounter'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Thread-Safe Counter examples'
+    group = 'interview-examples'
+}
+
+task runProducerConsumer(type: JavaExec) {
+    main = 'com.interview.concurrency.patterns.ProducerConsumer'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Producer-Consumer pattern examples'
+    group = 'interview-examples'
+}
+
+task runDeadlockExamples(type: JavaExec) {
+    main = 'com.interview.concurrency.patterns.DeadlockExample'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Deadlock examples and prevention'
+    group = 'interview-examples'
+}
+
+task runExecutorService(type: JavaExec) {
+    main = 'com.interview.concurrency.executors.ExecutorServiceExamples'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run basic ExecutorService examples'
+    group = 'interview-examples'
+}
+
+task runAdvancedExecutors(type: JavaExec) {
+    main = 'com.interview.concurrency.executors.AdvancedExecutorExamples'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run advanced Executor examples with futures and callbacks'
+    group = 'interview-examples'
+}
+
+task runExecutorsFactory(type: JavaExec) {
+    main = 'com.interview.concurrency.executors.ExecutorsFactoryExamples'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run comprehensive Executors.new*** factory method examples'
+    group = 'interview-examples'
+}
+
+task runExecutorMonitoring(type: JavaExec) {
+    main = 'com.interview.concurrency.executors.ExecutorMonitoringExamples'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run executor monitoring and debugging examples'
+    group = 'interview-examples'
+}
+
+task runCommandPattern(type: JavaExec) {
+    main = 'com.interview.concurrency.patterns.CommandPattern'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Command Pattern examples'
+    group = 'interview-examples'
+}
+
+task runConcurrentCollections(type: JavaExec) {
+    main = 'com.interview.concurrency.utilities.ConcurrentCollections'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Concurrent Collections examples'
+    group = 'interview-examples'
+}
+
+task runSynchronizationUtilities(type: JavaExec) {
+    main = 'com.interview.concurrency.utilities.SynchronizationUtilities'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run Synchronization Utilities examples'
+    group = 'interview-examples'
+}
+
+task runInteractiveMenu(type: JavaExec) {
+    main = 'com.interview.concurrency.ConcurrencyRunner'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run interactive menu for all examples'
+    group = 'interview-examples'
+    standardInput = System.in
+}
+
+task runHelper(type: JavaExec) {
+    main = 'com.interview.ConcurrencyExamplesHelper'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Show help for running examples'
+    group = 'interview-examples'
+}
+
+// Task to run sorting algorithms
+task runSortingAlgorithms(type: JavaExec) {
+    main = 'com.interview.algorithms.SortingAlgorithms'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run sorting algorithm examples'
+    group = 'interview-examples'
+}
+
+// Task to run string problems
+task runStringProblems(type: JavaExec) {
+    main = 'com.interview.problems.StringProblems'
+    classpath = sourceSets.main.runtimeClasspath
+    description = 'Run string problem examples'
+    group = 'interview-examples'
+}
+
+// Task to show all available examples
+task listExamples {
+    doLast {
+        println """
+=== Java Interview Examples ===
+
+Available Gradle tasks:
+
+CONCURRENCY EXAMPLES:
+  ./gradlew runThreadCreation           - Thread creation and lifecycle
+  ./gradlew runThreadSafeCounters      - Thread-safe counter implementations
+  ./gradlew runProducerConsumer        - Producer-Consumer pattern
+  ./gradlew runDeadlockExamples        - Deadlock scenarios and prevention
+  ./gradlew runExecutorService         - Basic ExecutorService examples
+  ./gradlew runAdvancedExecutors       - Advanced futures and callbacks
+  ./gradlew runCommandPattern          - Command pattern with executors
+  ./gradlew runConcurrentCollections   - Concurrent collections
+  ./gradlew runSynchronizationUtilities - Synchronization utilities
+
+DATA STRUCTURES & ALGORITHMS:
+  ./gradlew runSortingAlgorithms       - Sorting algorithm implementations
+  ./gradlew runStringProblems          - String manipulation problems
+
+INTERACTIVE:
+  ./gradlew runInteractiveMenu         - Interactive menu for all examples
+  ./gradlew runHelper                  - Show help and commands
+
+BASIC COMMANDS:
+  ./gradlew build                      - Build the project
+  ./gradlew run                        - Run default application (interactive menu)
+  ./gradlew clean                      - Clean build files
+        """
+    }
+    description = 'List all available example tasks'
+    group = 'interview-examples'
+}
+
+// Wrapper is already configured

@@ -1,0 +1,183 @@
+.App {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.navbar {
+  background-color: #282c34;
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar h1 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: #61dafb;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-links a:hover {
+  background-color: rgba(97, 218, 251, 0.1);
+}
+
+.main-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home {
+  text-align: center;
+  padding: 2rem;
+}
+
+.home h2 {
+  color: #282c34;
+  margin-bottom: 1rem;
+}
+
+.home ul {
+  text-align: left;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.home li {
+  margin-bottom: 0.5rem;
+}
+
+.example {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.example h3 {
+  margin-top: 0;
+  color: #495057;
+}
+
+.example h4 {
+  margin-top: 1rem;
+  color: #6c757d;
+}
+
+.example button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.example button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.example button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.example input[type="text"], .example input[type="number"] {
+  padding: 0.5rem;
+  margin: 0.25rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.example input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.example select {
+  padding: 0.5rem;
+  margin: 0.25rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.todo-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filters button {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #ced4da;
+}
+
+.filters button:hover {
+  background-color: #e9ecef;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item span {
+  flex: 1;
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .todo-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    justify-content: center;
+  }
+}
