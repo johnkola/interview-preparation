@@ -14,6 +14,7 @@
 ### Technical Deep Dives
 - **[Java Concurrency Guide](docs/java/JAVA_CONCURRENCY_COMPREHENSIVE.md)** - Complete concurrency patterns and banking-specific examples
 - **[Spring Boot Guide](docs/spring/SPRING_BOOT_COMPREHENSIVE.md)** - Auto-configuration, starters, and production optimization
+- **[React Full-Stack Guide](docs/react/REACT_FULLSTACK_COMPREHENSIVE.md)** - Complete React development for full-stack architects
 - **[Security Deep Dive](docs/security/SECURITY_DEEP_DIVE.md)** - OAuth 2.0, LDAP, SSO, and MFA implementations
 - **[Azure Services Guide](docs/azure/AZURE_SERVICES_GUIDE.md)** - App Service, Functions, and cloud integration
 - **[Microservices Communication](docs/microservices/MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md)** - Event-driven architecture and resilience patterns

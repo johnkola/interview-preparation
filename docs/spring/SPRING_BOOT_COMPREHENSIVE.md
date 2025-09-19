@@ -893,8 +893,1288 @@ public class AccountTransactionExtractor implements ResultSetExtractor<Map<Accou
 
 ---
 
-## ☁️ Azure Services Guide
+## ⚙️ Configuration and Properties
 
-<function_calls>
-<invoke name="TodoWrite">
-<parameter name="todos">[{"content":"Add comprehensive OAuth questions and answers","status":"completed","activeForm":"Adding comprehensive OAuth questions and answers"},{"content":"Add LDAP integration questions and answers","status":"completed","activeForm":"Adding LDAP integration questions and answers"},{"content":"Add SSO implementation questions","status":"completed","activeForm":"Adding SSO implementation questions"},{"content":"Add MFA/2FA questions and implementation details","status":"completed","activeForm":"Adding MFA/2FA questions and implementation details"},{"content":"Add PingFederate specific questions","status":"completed","activeForm":"Adding PingFederate specific questions"},{"content":"Create Spring Boot comprehensive guide","status":"completed","activeForm":"Creating Spring Boot comprehensive guide"},{"content":"Create Azure services guide","status":"in_progress","activeForm":"Creating Azure services guide"}]
+### Q7: Configuration Properties and Profiles
+
+**Answer:**
+Spring Boot provides multiple ways to manage configuration through properties and profiles.
+
+**Configuration Properties:**
+
+```java
+// Application Properties File - application.yml
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/bankingdb
+    username: bankuser
+    password: ${DB_PASSWORD:defaultpass}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+banking:
+  transaction:
+    daily-limit: 10000
+    max-retries: 3
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration: 86400
+  notification:
+    email:
+      enabled: true
+      smtp-host: smtp.bank.com
+
+---
+# Development Profile
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: ""
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+banking:
+  transaction:
+    daily-limit: 1000
+  security:
+    jwt:
+      secret: dev-secret
+
+---
+# Production Profile
+spring:
+  profiles: prod
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+banking:
+  transaction:
+    daily-limit: 50000
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+
+logging:
+  level:
+    com.bank: INFO
+    org.springframework.security: DEBUG
+```
+
+**Configuration Properties Classes:**
+
+```java
+// Type-safe configuration properties
+@ConfigurationProperties(prefix = "banking")
+@Data
+@Component
+@Validated
+public class BankingProperties {
+
+    @NotNull
+    private Transaction transaction = new Transaction();
+
+    @NotNull
+    private Security security = new Security();
+
+    @NotNull
+    private Notification notification = new Notification();
+
+    @Data
+    public static class Transaction {
+        @Min(value = 100, message = "Daily limit must be at least 100")
+        @Max(value = 100000, message = "Daily limit cannot exceed 100000")
+        private BigDecimal dailyLimit = new BigDecimal("10000");
+
+        @Min(1)
+        @Max(10)
+        private int maxRetries = 3;
+
+        @NotBlank
+        private String currency = "USD";
+    }
+
+    @Data
+    public static class Security {
+        @NotNull
+        private Jwt jwt = new Jwt();
+
+        @Data
+        public static class Jwt {
+            @NotBlank(message = "JWT secret is required")
+            private String secret;
+
+            @Min(value = 3600, message = "Expiration must be at least 1 hour")
+            private long expiration = 86400;
+
+            private String issuer = "banking-app";
+        }
+    }
+
+    @Data
+    public static class Notification {
+        @NotNull
+        private Email email = new Email();
+
+        @Data
+        public static class Email {
+            private boolean enabled = true;
+
+            @Email
+            private String fromAddress = "noreply@bank.com";
+
+            private String smtpHost = "localhost";
+
+            @Min(1)
+            @Max(65535)
+            private int smtpPort = 587;
+        }
+    }
+}
+
+// Using configuration properties
+@Service
+@RequiredArgsConstructor
+public class TransactionService {
+
+    private final BankingProperties bankingProperties;
+
+    public void validateTransactionLimit(BigDecimal amount) {
+        BigDecimal dailyLimit = bankingProperties.getTransaction().getDailyLimit();
+
+        if (amount.compareTo(dailyLimit) > 0) {
+            throw new TransactionLimitExceededException(
+                "Transaction amount " + amount + " exceeds daily limit " + dailyLimit
+            );
+        }
+    }
+}
+```
+
+**Profile-specific Configuration:**
+
+```java
+// Different configurations for different profiles
+@Configuration
+@Profile("dev")
+public class DevConfiguration {
+
+    @Bean
+    @Primary
+    public EmailService mockEmailService() {
+        return new MockEmailService();
+    }
+
+    @Bean
+    public DataSource h2DataSource() {
+        return new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.H2)
+            .addScript("classpath:schema-dev.sql")
+            .addScript("classpath:data-dev.sql")
+            .build();
+    }
+}
+
+@Configuration
+@Profile("prod")
+public class ProductionConfiguration {
+
+    @Bean
+    public EmailService realEmailService() {
+        return new SmtpEmailService();
+    }
+
+    @Bean
+    public DataSource productionDataSource(@Value("${spring.datasource.url}") String url,
+                                         @Value("${spring.datasource.username}") String username,
+                                         @Value("${spring.datasource.password}") String password) {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setMaximumPoolSize(20);
+        config.setMinimumIdle(5);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+
+        return new HikariDataSource(config);
+    }
+}
+
+// Conditional configuration
+@Configuration
+@ConditionalOnProperty(name = "banking.features.fraud-detection", havingValue = "true")
+public class FraudDetectionConfiguration {
+
+    @Bean
+    public FraudDetectionService fraudDetectionService() {
+        return new MLFraudDetectionService();
+    }
+}
+```
+
+### Q8: External Configuration Management
+
+**Answer:**
+Spring Boot supports various external configuration sources with a specific precedence order.
+
+**Configuration Precedence (highest to lowest):**
+
+```java
+// 1. Command line arguments
+java -jar banking-app.jar --server.port=8081 --spring.profiles.active=prod
+
+// 2. System properties
+System.setProperty("server.port", "8081");
+
+// 3. OS environment variables
+export SERVER_PORT=8081
+export SPRING_PROFILES_ACTIVE=prod
+
+// 4. application-{profile}.properties/yml
+// application-prod.properties
+// application-dev.properties
+
+// 5. application.properties/yml
+
+// 6. @PropertySource annotations
+@Configuration
+@PropertySource("classpath:banking.properties")
+public class ExternalConfig {
+    // Configuration
+}
+```
+
+**Environment-specific Configuration:**
+
+```java
+// Configuration for different environments
+@Component
+public class EnvironmentConfigExample {
+
+    @Value("${banking.environment:development}")
+    private String environment;
+
+    @Value("${banking.api.base-url}")
+    private String apiBaseUrl;
+
+    @Value("${banking.cache.ttl:3600}")
+    private int cacheTtl;
+
+    // Configuration with default values
+    @Value("${banking.features.mobile-app:false}")
+    private boolean mobileAppEnabled;
+
+    // Array/List configuration
+    @Value("${banking.supported-currencies}")
+    private String[] supportedCurrencies;
+
+    @Value("#{'${banking.admin-emails}'.split(',')}")
+    private List<String> adminEmails;
+
+    // Complex SpEL expressions
+    @Value("#{${banking.transaction.limits}}")
+    private Map<String, BigDecimal> transactionLimits;
+}
+
+// External configuration file loading
+@Configuration
+@EnableConfigurationProperties
+public class ExternalConfigurationLoader {
+
+    @Bean
+    @ConfigurationProperties(prefix = "external")
+    public ExternalSettings externalSettings() {
+        return new ExternalSettings();
+    }
+
+    // Load configuration from external file
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+
+        Resource[] resources = new Resource[] {
+            new ClassPathResource("application.properties"),
+            new FileSystemResource("/etc/banking/application.properties"),
+            new FileSystemResource("${user.home}/.banking/application.properties")
+        };
+
+        configurer.setLocations(resources);
+        configurer.setIgnoreResourceNotFound(true);
+        configurer.setIgnoreUnresolvablePlaceholders(false);
+
+        return configurer;
+    }
+}
+```
+
+---
+
+## 🔒 Security Integration
+
+### Q9: Spring Security Configuration
+
+**Answer:**
+Spring Security integration in Spring Boot provides comprehensive security features.
+
+**Complete Security Configuration:**
+
+```java
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
+public class SecurityConfiguration {
+
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final CustomUserDetailsService userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex ->
+                ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .authorizeHttpRequests(auth -> auth
+                // Public endpoints
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                // Account management - requires CUSTOMER role
+                .requestMatchers(HttpMethod.GET, "/api/accounts/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/accounts")
+                    .hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/accounts/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
+
+                // Transaction endpoints
+                .requestMatchers(HttpMethod.GET, "/api/transactions/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/transactions")
+                    .hasRole("CUSTOMER")
+
+                // Admin endpoints
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/reports/**").hasRole("ADMIN")
+
+                // All other requests need authentication
+                .anyRequest().authenticated()
+            );
+
+        // Add JWT filter before username/password authentication filter
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
+
+// Custom User Details Service
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsernameOrEmail(username, username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        return UserPrincipal.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .authorities(user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toList()))
+            .accountNonExpired(!user.isExpired())
+            .accountNonLocked(!user.isLocked())
+            .credentialsNonExpired(!user.isCredentialsExpired())
+            .enabled(user.isActive())
+            .build();
+    }
+}
+
+// Method-level security
+@Service
+@RequiredArgsConstructor
+public class AccountService {
+
+    @PreAuthorize("hasRole('ADMIN') or @accountOwnershipService.isOwner(authentication.name, #accountId)")
+    public Account getAccount(Long accountId) {
+        return accountRepository.findById(accountId)
+            .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountId));
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostAuthorize("@accountOwnershipService.isOwner(authentication.name, returnObject.id)")
+    public Account createAccount(CreateAccountRequest request) {
+        // Create account logic
+        return savedAccount;
+    }
+
+    @PreAuthorize("@transactionAuthorizationService.canPerformTransaction(authentication.name, #request)")
+    public Transaction performTransaction(TransactionRequest request) {
+        // Transaction logic
+        return transaction;
+    }
+}
+```
+
+### Q10: JWT Authentication Implementation
+
+**Answer:**
+JWT (JSON Web Token) authentication implementation in Spring Boot.
+
+**JWT Implementation:**
+
+```java
+// JWT Utility Class
+@Component
+public class JwtTokenUtil {
+
+    private static final String SECRET = "mySecretKey";
+    private static final int JWT_TOKEN_VALIDITY = 5 * 60 * 60; // 5 hours
+
+    private final Key key;
+
+    public JwtTokenUtil(@Value("${banking.security.jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+
+        // Add custom claims
+        if (userDetails instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) userDetails;
+            claims.put("userId", userPrincipal.getId());
+            claims.put("email", userPrincipal.getEmail());
+            claims.put("roles", userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+        }
+
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    private String createToken(Map<String, Object> claims, String subject) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + JWT_TOKEN_VALIDITY * 1000);
+
+        return Jwts.builder()
+            .setClaims(claims)
+            .setSubject(subject)
+            .setIssuedAt(now)
+            .setExpiration(expiryDate)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    public Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            final String username = getUsernameFromToken(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public String refreshToken(String token) {
+        try {
+            Claims claims = getAllClaimsFromToken(token);
+            claims.setIssuedAt(new Date());
+            claims.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000));
+
+            return Jwts.builder()
+                .setClaims(claims)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+        } catch (Exception e) {
+            throw new InvalidTokenException("Cannot refresh token", e);
+        }
+    }
+}
+
+// JWT Request Filter
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class JwtRequestFilter extends OncePerRequestFilter {
+
+    private final CustomUserDetailsService userDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                  FilterChain chain) throws ServletException, IOException {
+
+        final String requestTokenHeader = request.getHeader("Authorization");
+
+        String username = null;
+        String jwtToken = null;
+
+        // JWT Token is in the form "Bearer token"
+        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+            jwtToken = requestTokenHeader.substring(7);
+            try {
+                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+            } catch (IllegalArgumentException e) {
+                log.error("Unable to get JWT Token");
+            } catch (ExpiredJwtException e) {
+                log.error("JWT Token has expired");
+            } catch (JwtException e) {
+                log.error("Invalid JWT Token: {}", e.getMessage());
+            }
+        }
+
+        // Validate token and set authentication
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/api/auth/") ||
+               path.startsWith("/api/public/") ||
+               path.startsWith("/actuator/health") ||
+               path.startsWith("/swagger-ui/") ||
+               path.startsWith("/v3/api-docs/");
+    }
+}
+
+// Authentication Controller
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Validated
+public class AuthController {
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final CustomUserDetailsService userDetailsService;
+    private final UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+
+        authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+
+        final UserDetails userDetails = userDetailsService
+            .loadUserByUsername(loginRequest.getUsername());
+
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(JwtResponse.builder()
+            .token(token)
+            .type("Bearer")
+            .username(userDetails.getUsername())
+            .authorities(userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()))
+            .build());
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        try {
+            String refreshedToken = jwtTokenUtil.refreshToken(request.getToken());
+            String username = jwtTokenUtil.getUsernameFromToken(refreshedToken);
+
+            return ResponseEntity.ok(JwtResponse.builder()
+                .token(refreshedToken)
+                .type("Bearer")
+                .username(username)
+                .build());
+
+        } catch (Exception e) {
+            throw new InvalidTokenException("Cannot refresh token");
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request) {
+
+        if (userService.existsByUsername(request.getUsername())) {
+            throw new UserAlreadyExistsException("Username is already taken!");
+        }
+
+        if (userService.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email is already in use!");
+        }
+
+        userService.createUser(request);
+
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private void authenticate(String username, String password) {
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new UserDisabledException("User is disabled", e);
+        } catch (BadCredentialsException e) {
+            throw new InvalidCredentialsException("Invalid credentials", e);
+        }
+    }
+}
+```
+
+---
+
+## 🧪 Testing Strategies
+
+### Q11: Unit Testing with @SpringBootTest
+
+**Answer:**
+Comprehensive testing strategies for Spring Boot applications.
+
+**Spring Boot Test Annotations:**
+
+```java
+// Full Integration Test
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application-test.properties")
+@ActiveProfiles("test")
+class BankingApplicationIntegrationTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @MockBean
+    private EmailService emailService;
+
+    @Test
+    @Transactional
+    @Rollback
+    void shouldCreateAccountSuccessfully() {
+        // Given
+        CreateAccountRequest request = CreateAccountRequest.builder()
+            .customerId(1L)
+            .accountType(AccountType.SAVINGS)
+            .initialDeposit(new BigDecimal("1000.00"))
+            .build();
+
+        // When
+        ResponseEntity<Account> response = restTemplate.postForEntity(
+            "/api/accounts", request, Account.class);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody().getBalance()).isEqualTo(new BigDecimal("1000.00"));
+
+        // Verify database state
+        Optional<Account> savedAccount = accountRepository
+            .findByAccountNumber(response.getBody().getAccountNumber());
+        assertThat(savedAccount).isPresent();
+
+        // Verify mock interaction
+        verify(emailService).sendAccountCreationNotification(any(Account.class));
+    }
+}
+
+// Service Layer Test
+@ExtendWith(MockitoExtension.class)
+class TransactionServiceTest {
+
+    @Mock
+    private TransactionRepository transactionRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
+
+    @Mock
+    private FraudDetectionService fraudDetectionService;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @InjectMocks
+    private TransactionService transactionService;
+
+    @Test
+    void shouldProcessTransactionSuccessfully() {
+        // Given
+        Long fromAccountId = 1L;
+        Long toAccountId = 2L;
+        BigDecimal amount = new BigDecimal("500.00");
+
+        Account fromAccount = Account.builder()
+            .id(fromAccountId)
+            .balance(new BigDecimal("1000.00"))
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        Account toAccount = Account.builder()
+            .id(toAccountId)
+            .balance(new BigDecimal("500.00"))
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        when(accountRepository.findById(fromAccountId)).thenReturn(Optional.of(fromAccount));
+        when(accountRepository.findById(toAccountId)).thenReturn(Optional.of(toAccount));
+        when(fraudDetectionService.isTransactionSuspicious(any())).thenReturn(false);
+        when(transactionRepository.save(any(Transaction.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        TransactionResult result = transactionService.transferMoney(
+            fromAccountId, toAccountId, amount, "Test transfer");
+
+        // Then
+        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.getTransactionId()).isNotNull();
+
+        verify(accountRepository).save(argThat(account ->
+            account.getId().equals(fromAccountId) &&
+            account.getBalance().equals(new BigDecimal("500.00"))));
+
+        verify(accountRepository).save(argThat(account ->
+            account.getId().equals(toAccountId) &&
+            account.getBalance().equals(new BigDecimal("1000.00"))));
+
+        verify(notificationService).sendTransactionNotification(any(Transaction.class));
+    }
+
+    @Test
+    void shouldFailTransactionWhenInsufficientFunds() {
+        // Given
+        Long fromAccountId = 1L;
+        Long toAccountId = 2L;
+        BigDecimal amount = new BigDecimal("1500.00");
+
+        Account fromAccount = Account.builder()
+            .id(fromAccountId)
+            .balance(new BigDecimal("1000.00"))
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        when(accountRepository.findById(fromAccountId)).thenReturn(Optional.of(fromAccount));
+
+        // When & Then
+        assertThatThrownBy(() -> transactionService.transferMoney(
+            fromAccountId, toAccountId, amount, "Test transfer"))
+            .isInstanceOf(InsufficientFundsException.class)
+            .hasMessage("Insufficient funds for transaction");
+
+        verify(accountRepository, never()).save(any(Account.class));
+        verify(transactionRepository, never()).save(any(Transaction.class));
+    }
+}
+```
+
+### Q12: Integration Testing Best Practices
+
+**Answer:**
+Best practices for integration testing in Spring Boot applications.
+
+**Test Slices and Specialized Testing:**
+
+```java
+// Web Layer Testing
+@WebMvcTest(AccountController.class)
+class AccountControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private AccountService accountService;
+
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Test
+    @WithMockUser(roles = "CUSTOMER")
+    void shouldReturnAccountDetails() throws Exception {
+        // Given
+        Long accountId = 1L;
+        Account account = Account.builder()
+            .id(accountId)
+            .accountNumber("ACC001")
+            .balance(new BigDecimal("1000.00"))
+            .accountType(AccountType.SAVINGS)
+            .build();
+
+        when(accountService.getAccount(accountId)).thenReturn(account);
+
+        // When & Then
+        mockMvc.perform(get("/api/accounts/{id}", accountId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(accountId))
+                .andExpect(jsonPath("$.accountNumber").value("ACC001"))
+                .andExpect(jsonPath("$.balance").value(1000.00))
+                .andExpect(jsonPath("$.accountType").value("SAVINGS"));
+
+        verify(accountService).getAccount(accountId);
+    }
+
+    @Test
+    @WithMockUser(roles = "CUSTOMER")
+    void shouldValidateCreateAccountRequest() throws Exception {
+        // Given
+        String invalidRequest = """
+            {
+                "customerId": null,
+                "accountType": "INVALID_TYPE",
+                "initialDeposit": -100
+            }
+            """;
+
+        // When & Then
+        mockMvc.perform(post("/api/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[*].field",
+                    hasItems("customerId", "accountType", "initialDeposit")));
+    }
+}
+
+// Repository Layer Testing
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class AccountRepositoryTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Test
+    void shouldFindAccountsByCustomerId() {
+        // Given
+        Customer customer = Customer.builder()
+            .username("testuser")
+            .email("test@example.com")
+            .build();
+        entityManager.persistAndFlush(customer);
+
+        Account account1 = Account.builder()
+            .accountNumber("ACC001")
+            .customerId(customer.getId())
+            .balance(new BigDecimal("1000.00"))
+            .accountType(AccountType.SAVINGS)
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        Account account2 = Account.builder()
+            .accountNumber("ACC002")
+            .customerId(customer.getId())
+            .balance(new BigDecimal("2000.00"))
+            .accountType(AccountType.CHECKING)
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        entityManager.persist(account1);
+        entityManager.persist(account2);
+        entityManager.flush();
+
+        // When
+        List<Account> accounts = accountRepository.findByCustomerId(customer.getId());
+
+        // Then
+        assertThat(accounts).hasSize(2);
+        assertThat(accounts).extracting(Account::getAccountNumber)
+            .containsExactlyInAnyOrder("ACC001", "ACC002");
+    }
+
+    @Test
+    void shouldFindActiveAccountsWithBalanceGreaterThan() {
+        // Given
+        Account activeAccount = Account.builder()
+            .accountNumber("ACC001")
+            .balance(new BigDecimal("1500.00"))
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        Account inactiveAccount = Account.builder()
+            .accountNumber("ACC002")
+            .balance(new BigDecimal("2000.00"))
+            .status(AccountStatus.INACTIVE)
+            .build();
+
+        Account lowBalanceAccount = Account.builder()
+            .accountNumber("ACC003")
+            .balance(new BigDecimal("500.00"))
+            .status(AccountStatus.ACTIVE)
+            .build();
+
+        entityManager.persist(activeAccount);
+        entityManager.persist(inactiveAccount);
+        entityManager.persist(lowBalanceAccount);
+        entityManager.flush();
+
+        // When
+        List<Account> accounts = accountRepository
+            .findActiveAccountsWithMinimumBalance(new BigDecimal("1000.00"));
+
+        // Then
+        assertThat(accounts).hasSize(1);
+        assertThat(accounts.get(0).getAccountNumber()).isEqualTo("ACC001");
+    }
+}
+
+// Security Testing
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class SecurityIntegrationTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Test
+    void shouldDenyAccessWithoutAuthentication() {
+        // When
+        ResponseEntity<String> response = restTemplate.getForEntity(
+            "/api/accounts/1", String.class);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void shouldAllowAccessWithValidToken() {
+        // Given
+        UserDetails userDetails = User.builder()
+            .username("testuser")
+            .password("password")
+            .authorities("ROLE_CUSTOMER")
+            .build();
+
+        String token = jwtTokenUtil.generateToken(userDetails);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // When
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/api/accounts/1", HttpMethod.GET, entity, String.class);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+}
+```
+
+### Q13: Test Slices and Mock Testing
+
+**Answer:**
+Using Spring Boot test slices for focused testing.
+
+**Comprehensive Test Slices:**
+
+```java
+// JSON Serialization Testing
+@JsonTest
+class AccountJsonTest {
+
+    @Autowired
+    private JacksonTester<Account> json;
+
+    @Test
+    void shouldSerializeAccount() throws Exception {
+        // Given
+        Account account = Account.builder()
+            .id(1L)
+            .accountNumber("ACC001")
+            .balance(new BigDecimal("1000.00"))
+            .accountType(AccountType.SAVINGS)
+            .createdAt(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+            .build();
+
+        // When & Then
+        assertThat(json.write(account))
+            .hasJsonPathStringValue("$.accountNumber", "ACC001")
+            .hasJsonPathNumberValue("$.balance", 1000.00)
+            .hasJsonPathStringValue("$.accountType", "SAVINGS")
+            .hasJsonPathStringValue("$.createdAt", "2024-01-15T10:30:00");
+    }
+
+    @Test
+    void shouldDeserializeAccount() throws Exception {
+        // Given
+        String jsonContent = """
+            {
+                "id": 1,
+                "accountNumber": "ACC001",
+                "balance": 1000.00,
+                "accountType": "SAVINGS",
+                "createdAt": "2024-01-15T10:30:00"
+            }
+            """;
+
+        // When & Then
+        assertThat(json.parse(jsonContent))
+            .usingRecursiveComparison()
+            .isEqualTo(Account.builder()
+                .id(1L)
+                .accountNumber("ACC001")
+                .balance(new BigDecimal("1000.00"))
+                .accountType(AccountType.SAVINGS)
+                .createdAt(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .build());
+    }
+}
+
+// Redis Testing
+@DataRedisTest
+class CacheServiceTest {
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private AccountCacheService accountCacheService;
+
+    @Test
+    void shouldCacheAccount() {
+        // Given
+        Account account = Account.builder()
+            .id(1L)
+            .accountNumber("ACC001")
+            .balance(new BigDecimal("1000.00"))
+            .build();
+
+        // When
+        accountCacheService.cacheAccount(account);
+
+        // Then
+        Account cachedAccount = accountCacheService.getAccountFromCache(1L);
+        assertThat(cachedAccount).isEqualTo(account);
+    }
+
+    @Test
+    void shouldExpireCachedAccount() throws InterruptedException {
+        // Given
+        Account account = Account.builder()
+            .id(1L)
+            .accountNumber("ACC001")
+            .build();
+
+        // When
+        accountCacheService.cacheAccountWithTtl(account, 1); // 1 second TTL
+
+        // Then
+        assertThat(accountCacheService.getAccountFromCache(1L)).isNotNull();
+
+        Thread.sleep(1100); // Wait for expiration
+
+        assertThat(accountCacheService.getAccountFromCache(1L)).isNull();
+    }
+}
+
+// Message Queue Testing
+@SpringBootTest
+@DirtiesContext
+class MessageQueueIntegrationTest {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private TransactionEventPublisher eventPublisher;
+
+    @RabbitListener(queues = "transaction.events")
+    private List<TransactionEvent> receivedEvents = new ArrayList<>();
+
+    @Test
+    void shouldPublishAndReceiveTransactionEvent() throws InterruptedException {
+        // Given
+        TransactionEvent event = TransactionEvent.builder()
+            .transactionId("TXN001")
+            .accountId(1L)
+            .amount(new BigDecimal("500.00"))
+            .type(TransactionType.TRANSFER)
+            .timestamp(LocalDateTime.now())
+            .build();
+
+        // When
+        eventPublisher.publishTransactionEvent(event);
+
+        // Then
+        await().atMost(5, TimeUnit.SECONDS)
+            .until(() -> receivedEvents.size() == 1);
+
+        assertThat(receivedEvents.get(0))
+            .usingRecursiveComparison()
+            .isEqualTo(event);
+    }
+}
+
+// Custom Test Configuration
+@TestConfiguration
+public class TestConfig {
+
+    @Bean
+    @Primary
+    public Clock testClock() {
+        return Clock.fixed(
+            Instant.parse("2024-01-15T10:30:00Z"),
+            ZoneOffset.UTC
+        );
+    }
+
+    @Bean
+    @Primary
+    public EmailService mockEmailService() {
+        return Mockito.mock(EmailService.class);
+    }
+
+    @EventListener
+    public void handleTestEvent(TransactionEvent event) {
+        // Test event handling
+    }
+}
+
+// Performance Testing
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class PerformanceTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void shouldResponseQuicklyUnderLoad() {
+        // When
+        List<CompletableFuture<ResponseEntity<String>>> futures =
+            IntStream.range(0, 100)
+                .mapToObj(i -> CompletableFuture.supplyAsync(() ->
+                    restTemplate.getForEntity("/api/accounts/1", String.class)))
+                .collect(Collectors.toList());
+
+        // Then
+        List<ResponseEntity<String>> responses = futures.stream()
+            .map(CompletableFuture::join)
+            .collect(Collectors.toList());
+
+        assertThat(responses).hasSize(100);
+        assertThat(responses).allMatch(response ->
+            response.getStatusCode().is2xxSuccessful());
+    }
+}
+```
+
+---
