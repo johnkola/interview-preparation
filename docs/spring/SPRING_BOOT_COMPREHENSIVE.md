@@ -331,6 +331,8 @@ public class ActuatorSecurityConfig {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 💾 Spring Data JPA
 
 ### Q4: Explain Repository Pattern and different repository interfaces
@@ -658,6 +660,8 @@ public class TransactionExceptionHandler {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 🔗 Spring JDBC
 
 ### Q6: How to use JdbcTemplate and NamedParameterJdbcTemplate?
@@ -893,6 +897,8 @@ public class AccountTransactionExtractor implements ResultSetExtractor<Map<Accou
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## ⚙️ Configuration and Properties
 
 ### Q7: Configuration Properties and Profiles
@@ -1236,6 +1242,8 @@ public class ExternalConfigurationLoader {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 🔒 Security Integration
 
 ### Q9: Spring Security Configuration
@@ -1632,6 +1640,8 @@ public class AuthController {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 🧪 Testing Strategies
 
 ### Q11: Unit Testing with @SpringBootTest

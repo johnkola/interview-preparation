@@ -38,6 +38,8 @@ Reactive programming is a programming paradigm oriented around data flows and th
 - Scalability for high-throughput applications
 - Backpressure handling
 
+[⬆️ Back to Top](#table-of-contents)
+
 ## Spring WebFlux vs Spring MVC
 
 ### Architecture Comparison
@@ -92,6 +94,8 @@ public class ReactiveController {
 - Simple CRUD applications
 - Team unfamiliarity with reactive programming
 - Debugging simplicity is priority
+
+[⬆️ Back to Top](#table-of-contents)
 
 ## Setting up Reactive Spring Boot
 
@@ -162,6 +166,8 @@ public class ReactiveBankingApplication {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Reactive Data Types
 
 ### Mono and Flux
@@ -279,6 +285,8 @@ public class ReactiveOperatorsExample {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Reactive Controllers
 
 ### Basic Controllers
@@ -377,6 +385,8 @@ public class ReactiveTransactionController {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Reactive Data Access
 
 ### R2DBC Repository
@@ -531,6 +541,8 @@ public class ReactiveAccountService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## R2DBC Integration
 
 ### Configuration
@@ -627,6 +639,8 @@ CREATE INDEX idx_transactions_account_id ON transactions(account_id);
 CREATE INDEX idx_transactions_created_at ON transactions(created_at);
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Reactive MongoDB
 
 ### Configuration
@@ -769,6 +783,8 @@ public class ReactiveAuditService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Error Handling
 
 ### Global Error Handler
@@ -891,6 +907,8 @@ public class ReactivePaymentService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Testing Reactive Applications
 
 ### Unit Testing
@@ -1145,6 +1163,8 @@ public class ReactivePerformanceTest {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Performance and Backpressure
 
 ### Backpressure Strategies
@@ -1329,6 +1349,8 @@ public class OptimizedReactiveService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Reactive Security
 
 ### WebFlux Security Configuration
@@ -1520,6 +1542,8 @@ public class AccountSecurityService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Streaming and Server-Sent Events
 
 ### Server-Sent Events
@@ -1704,6 +1728,8 @@ public class WebSocketConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## WebClient for Reactive HTTP
 
 ### Configuration
@@ -1843,6 +1869,8 @@ public class ReactiveExternalPaymentService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Banking Domain Examples
 
 ### Complete Banking Application
@@ -2006,6 +2034,8 @@ public class CompleteBankingService {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Best Practices
 
 ### Design Principles
@@ -2127,6 +2157,8 @@ void shouldRespectTiming() {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Common Pitfalls
 
 ### 1. Blocking Operations
@@ -2192,6 +2224,8 @@ public Mono<Result> processRequest(Request request) {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Interview Questions
 
 ### Beginner Level
@@ -2296,4 +2330,6 @@ A: Approaches include:
 - Eventual consistency
 - Compensation patterns
 
+
+[⬆️ Back to Top](#table-of-contents)
 This comprehensive guide covers the essential aspects of Spring Boot Reactive Programming. The reactive paradigm offers significant benefits for high-throughput, I/O-intensive applications, especially in banking and financial services where scalability and responsiveness are crucial.

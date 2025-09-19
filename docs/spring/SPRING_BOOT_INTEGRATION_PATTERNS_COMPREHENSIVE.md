@@ -50,6 +50,8 @@ Integration patterns are well-established solutions for common problems in enter
 - **Channel Adapters**: Easy integration with external systems
 - **Testing Support**: Comprehensive testing framework
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Spring Integration Framework
 
 ### Core Dependencies
@@ -134,6 +136,8 @@ public class IntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Message Channels
 
 ### Channel Types
@@ -246,6 +250,8 @@ public class ChannelInterceptorConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Message Endpoints
 
 ### Service Activators
@@ -479,6 +485,8 @@ public class SplitterAggregatorComponents {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Enterprise Integration Patterns
 
 ### Content-Based Router
@@ -683,6 +691,8 @@ public class ScatterGatherConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## File Integration
 
 ### File Inbound Adapter
@@ -805,6 +815,8 @@ public class SftpIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Database Integration
 
 ### JDBC Integration
@@ -907,6 +919,8 @@ public class JpaIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## REST API Integration
 
 ### HTTP Inbound Gateway
@@ -1016,6 +1030,8 @@ public class WebFluxIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Message Queue Integration
 
 ### JMS Integration
@@ -1133,6 +1149,8 @@ public class RabbitMqIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Event-Driven Architecture
 
 ### Domain Events
@@ -1371,6 +1389,8 @@ public class EventSourcingConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Batch Processing Integration
 
 ### Spring Batch Integration
@@ -1546,6 +1566,8 @@ public class FileBatchProcessingConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Error Handling and Retry
 
 ### Error Handling Configuration
@@ -1738,6 +1760,8 @@ public class CircuitBreakerConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Monitoring and Observability
 
 ### Metrics and Monitoring
@@ -1867,6 +1891,8 @@ public class ExternalServiceHealthCheck implements HealthIndicator {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Security in Integration
 
 ### Message Security
@@ -1993,6 +2019,8 @@ public class OAuthIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Banking Domain Examples
 
 ### Complete Payment Processing System
@@ -2192,6 +2220,8 @@ public class PaymentProcessingIntegrationConfig {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Testing Integration Flows
 
 ### Unit Testing
@@ -2358,6 +2388,8 @@ void shouldHandleHighVolumePayments() {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Best Practices
 
 ### Design Principles
@@ -2421,6 +2453,8 @@ public class PerformanceOptimizationConfig {
 4. **Audit Logging**: Log all security-relevant events
 5. **Secure Transport**: Use TLS for all external communication
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Common Pitfalls
 
 ### 1. Memory Leaks
@@ -2494,6 +2528,8 @@ public CompletableFuture<String> processMessage(String message) {
 }
 ```
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## Interview Questions
 
 ### Beginner Level
@@ -2579,4 +2615,6 @@ A: Monitoring strategy includes:
 - Alerting on anomalies
 - Distributed tracing for complex flows
 
+
+[⬆️ Back to Top](#table-of-contents)
 This comprehensive guide covers the essential aspects of Spring Boot Integration Patterns, providing practical examples and best practices for building robust, scalable integration solutions in banking and financial services.

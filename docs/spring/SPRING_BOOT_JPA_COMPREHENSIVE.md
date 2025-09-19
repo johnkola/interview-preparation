@@ -635,6 +635,8 @@ public class ProductionConnectionPoolConfig {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 🗂️ Entity Design and Mapping
 
 ### Q4: Entity Relationships and Mapping Strategies
@@ -1658,6 +1660,8 @@ public enum EmploymentStatus {
 
 ---
 
+
+[⬆️ Back to Top](#table-of-contents)
 ## 📊 Repository Pattern
 
 *[Continue with remaining sections...]*
