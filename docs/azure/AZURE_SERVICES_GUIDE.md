@@ -1,5 +1,43 @@
 # Azure Services Interview Guide
 
+## 📖 Table of Contents
+
+### 1. [Azure App Service](#azure-app-service)
+- [Q1: What is Azure App Service and how do you deploy Spring Boot applications to it?](#q1-what-is-azure-app-service-and-how-do-you-deploy-spring-boot-applications-to-it)
+- [Q2: How do you handle scaling and performance in Azure App Service?](#q2-how-do-you-handle-scaling-and-performance-in-azure-app-service)
+
+### 2. [Azure Functions](#azure-functions)
+- [Q3: How do you create Azure Functions with Spring Boot?](#q3-how-do-you-create-azure-functions-with-spring-boot)
+
+### 3. [Azure Service Bus](#azure-service-bus)
+- [Q4: How do you integrate Azure Service Bus with Spring Boot?](#q4-how-do-you-integrate-azure-service-bus-with-spring-boot)
+
+### 4. [Azure Key Vault](#azure-key-vault)
+- [Q5: How do you integrate Azure Key Vault with Spring Boot for secrets management?](#q5-how-do-you-integrate-azure-key-vault-with-spring-boot-for-secrets-management)
+
+### 5. [Azure Database Services](#azure-database-services)
+- [Q6: Azure SQL Database integration](#q6-azure-sql-database-integration)
+- [Q7: Azure Cosmos DB with Spring Data](#q7-azure-cosmos-db-with-spring-data)
+
+### 6. [Azure Storage Services](#azure-storage-services)
+- [Q8: Blob Storage integration](#q8-blob-storage-integration)
+- [Q9: File storage and document management](#q9-file-storage-and-document-management)
+
+### 7. [Azure Active Directory](#azure-active-directory)
+- [Q10: AAD authentication integration](#q10-aad-authentication-integration)
+- [Q11: Role-based access control](#q11-role-based-access-control)
+
+### 8. [Monitoring and DevOps](#monitoring-and-devops)
+- [Q12: Application Insights integration](#q12-application-insights-integration)
+- [Q13: Azure DevOps CI/CD pipelines](#q13-azure-devops-cicd-pipelines)
+
+### 9. [Best Practices](#best-practices)
+- [Cost optimization strategies](#cost-optimization-strategies)
+- [Security configurations](#security-configurations)
+- [Performance monitoring](#performance-monitoring)
+
+---
+
 ## ☁️ Azure App Service
 
 ### Q1: What is Azure App Service and how do you deploy Spring Boot applications to it?

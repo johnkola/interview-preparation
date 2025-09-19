@@ -1,5 +1,47 @@
 # Spring Boot Comprehensive Interview Guide
 
+## 📖 Table of Contents
+
+### 1. [Spring Boot Fundamentals](#spring-boot-fundamentals)
+- [Q1: What is Spring Boot and how does Auto-Configuration work?](#q1-what-is-spring-boot-and-how-does-auto-configuration-work)
+- [Q2: Explain Spring Boot Starters and their benefits](#q2-explain-spring-boot-starters-and-their-benefits)
+- [Q3: How does Spring Boot Actuator work and what endpoints are available?](#q3-how-does-spring-boot-actuator-work-and-what-endpoints-are-available)
+
+### 2. [Spring Data JPA](#spring-data-jpa)
+- [Q4: Explain Repository Pattern and different repository interfaces](#q4-explain-repository-pattern-and-different-repository-interfaces)
+- [Q5: How do you handle Transactions in Spring Data JPA?](#q5-how-do-you-handle-transactions-in-spring-data-jpa)
+
+### 3. [Spring JDBC](#spring-jdbc)
+- [Q6: How to use JdbcTemplate and NamedParameterJdbcTemplate?](#q6-how-to-use-jdbctemplate-and-namedparameterjdbctemplate)
+
+### 4. [Configuration and Properties](#configuration-and-properties)
+- [Q7: Configuration Properties and Profiles](#q7-configuration-properties-and-profiles)
+- [Q8: External Configuration Management](#q8-external-configuration-management)
+
+### 5. [Security Integration](#security-integration)
+- [Q9: Spring Security Configuration](#q9-spring-security-configuration)
+- [Q10: JWT Authentication Implementation](#q10-jwt-authentication-implementation)
+
+### 6. [Testing Strategies](#testing-strategies)
+- [Q11: Unit Testing with @SpringBootTest](#q11-unit-testing-with-springboottest)
+- [Q12: Integration Testing Best Practices](#q12-integration-testing-best-practices)
+- [Q13: Test Slices and Mock Testing](#q13-test-slices-and-mock-testing)
+
+### 7. [Performance and Monitoring](#performance-and-monitoring)
+- [Q14: Application Performance Tuning](#q14-application-performance-tuning)
+- [Q15: Monitoring and Metrics](#q15-monitoring-and-metrics)
+
+### 8. [Build Tools and DevOps](#build-tools-and-devops)
+- [Q16: Maven vs Gradle Configuration](#q16-maven-vs-gradle-configuration)
+- [Q17: Docker and Containerization](#q17-docker-and-containerization)
+
+### 9. [Best Practices](#best-practices)
+- [Production Deployment Guidelines](#production-deployment-guidelines)
+- [Security Best Practices](#security-best-practices)
+- [Performance Optimization Tips](#performance-optimization-tips)
+
+---
+
 ## 🚀 Spring Boot Fundamentals
 
 ### Q1: What is Spring Boot and how does Auto-Configuration work?

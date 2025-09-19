@@ -1,5 +1,43 @@
 # Security Deep Dive - OAuth, LDAP, SSO, MFA Interview Questions
 
+## 📖 Table of Contents
+
+### 1. [OAuth 2.0 Questions & Answers](#oauth-20-questions--answers)
+- [Q1: Explain OAuth 2.0 and its grant types](#q1-explain-oauth-20-and-its-grant-types)
+- [Q2: How do you implement OAuth 2.0 in Spring Boot?](#q2-how-do-you-implement-oauth-20-in-spring-boot)
+- [Q3: What's the difference between ID Token and Access Token?](#q3-whats-the-difference-between-id-token-and-access-token)
+
+### 2. [LDAP Questions & Answers](#ldap-questions--answers)
+- [Q4: What is LDAP and how do you integrate it with Spring Security?](#q4-what-is-ldap-and-how-do-you-integrate-it-with-spring-security)
+- [Q5: How do you perform LDAP queries and user synchronization?](#q5-how-do-you-perform-ldap-queries-and-user-synchronization)
+- [Q6: Explain LDAP directory structure and DN (Distinguished Name)](#q6-explain-ldap-directory-structure-and-dn-distinguished-name)
+
+### 3. [SSO (Single Sign-On) Questions & Answers](#sso-single-sign-on-questions--answers)
+- [Q7: Explain SSO and how to implement it](#q7-explain-sso-and-how-to-implement-it)
+- [Q8: What's the difference between SAML and OAuth/OIDC for SSO?](#q8-whats-the-difference-between-saml-and-oauthoicd-for-sso)
+
+### 4. [MFA (Multi-Factor Authentication) Questions & Answers](#mfa-multi-factor-authentication-questions--answers)
+- [Q9: How do you implement MFA/2FA in a Spring application?](#q9-how-do-you-implement-mfa2fa-in-a-spring-application)
+- [Q10: What are different types of MFA factors?](#q10-what-are-different-types-of-mfa-factors)
+
+### 5. [PingFederate Questions & Answers](#pingfederate-questions--answers)
+- [Q11: What is PingFederate and how do you integrate it?](#q11-what-is-pingfederate-and-how-do-you-integrate-it)
+- [Q12: How do you handle token validation with PingFederate?](#q12-how-do-you-handle-token-validation-with-pingfederate)
+
+### 6. [Security Best Practices & Common Scenarios](#security-best-practices--common-scenarios)
+- [Q13: How do you handle token storage and refresh in a microservices architecture?](#q13-how-do-you-handle-token-storage-and-refresh-in-a-microservices-architecture)
+- [Q14: How do you implement API Gateway security with OAuth?](#q14-how-do-you-implement-api-gateway-security-with-oauth)
+- [Q15: Banking-specific security patterns](#q15-banking-specific-security-patterns)
+- [Q16: Common security vulnerabilities and prevention](#q16-common-security-vulnerabilities-and-prevention)
+
+### 7. [Implementation Examples](#implementation-examples)
+- [Complete OAuth 2.0 Resource Server](#complete-oauth-20-resource-server)
+- [LDAP Authentication Configuration](#ldap-authentication-configuration)
+- [JWT Token Management](#jwt-token-management)
+- [Security Testing Strategies](#security-testing-strategies)
+
+---
+
 ## 🔐 OAuth 2.0 Questions & Answers
 
 ### Q1: Explain OAuth 2.0 and its grant types

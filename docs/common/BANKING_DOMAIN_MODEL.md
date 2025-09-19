@@ -1,5 +1,44 @@
 # Banking Domain Model Reference
 
+## 📖 Table of Contents
+
+### 1. [Overview](#overview)
+
+### 2. [Core Banking Entities](#core-banking-entities)
+- [Account Entity](#account-entity)
+- [Transaction Entity](#transaction-entity)
+- [Customer Entity](#customer-entity)
+
+### 3. [Enumerations](#enumerations)
+- [AccountType](#accounttype)
+- [AccountStatus](#accountstatus)
+- [TransactionType](#transactiontype)
+- [TransactionStatus](#transactionstatus)
+
+### 4. [Service Layer Patterns](#service-layer-patterns)
+- [AccountService](#accountservice)
+- [TransactionService](#transactionservice)
+
+### 5. [Repository Patterns](#repository-patterns)
+- [AccountRepository](#accountrepository)
+- [TransactionRepository](#transactionrepository)
+
+### 6. [Exception Handling](#exception-handling)
+- [Banking-Specific Exceptions](#banking-specific-exceptions)
+
+### 7. [DTO Patterns](#dto-patterns)
+- [Account DTOs](#account-dtos)
+
+### 8. [Configuration Examples](#configuration-examples)
+- [Database Configuration](#database-configuration)
+
+### 9. [Usage Guidelines](#usage-guidelines)
+- [When to Use This Reference](#when-to-use-this-reference)
+- [Cross-Reference Locations](#cross-reference-locations)
+- [Best Practices](#best-practices)
+
+---
+
 ## 📋 Overview
 This document defines the common banking domain model used across all interview preparation guides. It provides standardized entity definitions, service patterns, and examples that maintain consistency throughout the documentation.
 

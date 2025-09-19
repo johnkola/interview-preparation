@@ -2,16 +2,62 @@
 
 ## 📖 Table of Contents
 
-1. [Introduction to Microservices Communication](#introduction)
-2. [Synchronous Communication Patterns](#synchronous-patterns)
-3. [Asynchronous Communication Patterns](#asynchronous-patterns)
-4. [Event-Driven Architecture](#event-driven)
-5. [Service Discovery & Load Balancing](#service-discovery)
-6. [Circuit Breaker & Resilience Patterns](#resilience-patterns)
-7. [Data Consistency Patterns](#data-consistency)
-8. [Security in Microservices Communication](#security)
-9. [Monitoring & Observability](#monitoring)
-10. [Banking-Specific Communication Patterns](#banking-patterns)
+### 1. [Introduction to Microservices Communication](#introduction)
+- [Key Communication Challenges in Banking](#key-communication-challenges-in-banking)
+- [Communication Patterns Overview](#communication-patterns-overview)
+
+### 2. [Synchronous Communication Patterns](#synchronous-patterns)
+- [1. REST API Communication](#1-rest-api-communication)
+- [2. gRPC Communication](#2-grpc-communication)
+
+### 3. [Asynchronous Communication Patterns](#asynchronous-patterns)
+- [1. Message Queue Communication](#1-message-queue-communication)
+- [2. Apache Kafka Implementation](#2-apache-kafka-implementation)
+
+### 4. [Event-Driven Architecture](#event-driven)
+- [1. Event Sourcing Implementation](#1-event-sourcing-implementation)
+- [2. CQRS Implementation](#2-cqrs-implementation)
+
+### 5. [Service Discovery & Load Balancing](#service-discovery)
+- [Service Discovery Patterns](#service-discovery-patterns)
+- [Load Balancing Strategies](#load-balancing-strategies)
+
+### 6. [Circuit Breaker & Resilience Patterns](#resilience-patterns)
+- [Circuit Breaker Implementation](#circuit-breaker-implementation)
+- [Retry and Timeout Patterns](#retry-and-timeout-patterns)
+- [Bulkhead Pattern](#bulkhead-pattern)
+
+### 7. [Data Consistency Patterns](#data-consistency)
+- [Saga Pattern Implementation](#saga-pattern-implementation)
+- [Two-Phase Commit vs Saga](#two-phase-commit-vs-saga)
+- [Eventual Consistency Strategies](#eventual-consistency-strategies)
+
+### 8. [Security in Microservices Communication](#security)
+- [JWT Token Propagation](#jwt-token-propagation)
+- [mTLS Implementation](#mtls-implementation)
+- [API Gateway Security](#api-gateway-security)
+
+### 9. [Monitoring & Observability](#monitoring)
+- [Distributed Tracing](#distributed-tracing)
+- [Metrics and Logging](#metrics-and-logging)
+- [Health Checks](#health-checks)
+
+### 10. [Banking-Specific Communication Patterns](#banking-patterns)
+- [Transaction Processing Patterns](#transaction-processing-patterns)
+- [Regulatory Compliance Communication](#regulatory-compliance-communication)
+- [Real-time Fraud Detection](#real-time-fraud-detection)
+
+### 11. [Interview Questions & Scenarios](#interview-questions)
+- [Q1: How do you handle distributed transactions?](#q1-how-do-you-handle-distributed-transactions)
+- [Q2: Explain circuit breaker pattern](#q2-explain-circuit-breaker-pattern)
+- [Q3: Event sourcing vs traditional CRUD](#q3-event-sourcing-vs-traditional-crud)
+- [Q4: Microservices vs monolith trade-offs](#q4-microservices-vs-monolith-trade-offs)
+- [Q5: Handling service failures](#q5-handling-service-failures)
+
+### 12. [Best Practices](#best-practices)
+- [Communication Design Principles](#communication-design-principles)
+- [Performance Optimization](#performance-optimization)
+- [Testing Strategies](#testing-strategies)
 
 ---
 

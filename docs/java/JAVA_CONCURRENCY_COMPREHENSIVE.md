@@ -2,16 +2,52 @@
 
 ## 📖 Table of Contents
 
-1. [Introduction to Java Concurrency](#introduction)
-2. [Thread Fundamentals](#thread-fundamentals)
-3. [Synchronization Mechanisms](#synchronization-mechanisms)
-4. [Executor Framework](#executor-framework)
-5. [Concurrent Collections](#concurrent-collections)
-6. [Synchronization Utilities](#synchronization-utilities)
-7. [Banking-Specific Concurrency Patterns](#banking-patterns)
-8. [Common Concurrency Problems](#concurrency-problems)
-9. [Interview Questions & Answers](#interview-questions)
-10. [Best Practices](#best-practices)
+### 1. [Introduction to Java Concurrency](#introduction)
+- [Why Concurrency Matters in Banking](#why-concurrency-matters-in-banking)
+- [Key Concepts](#key-concepts)
+
+### 2. [Thread Fundamentals](#thread-fundamentals)
+- [Thread Creation Methods](#thread-creation-methods)
+- [Thread Lifecycle and States](#thread-lifecycle-and-states)
+- [Thread Safety Fundamentals](#thread-safety-fundamentals)
+
+### 3. [Synchronization Mechanisms](#synchronization-mechanisms)
+- [Synchronized Methods and Blocks](#synchronized-methods-and-blocks)
+- [Producer-Consumer Pattern](#producer-consumer-pattern)
+- [Deadlock Prevention](#deadlock-prevention)
+
+### 4. [Executor Framework](#executor-framework)
+- [Basic Executor Services](#basic-executor-services)
+
+### 5. [Concurrent Collections](#concurrent-collections)
+- [Thread-Safe Collections for Banking](#thread-safe-collections-for-banking)
+
+### 6. [Synchronization Utilities](#synchronization-utilities)
+- [Advanced Synchronization Patterns](#advanced-synchronization-patterns)
+
+### 7. [Banking-Specific Concurrency Patterns](#banking-patterns)
+- [High-Performance Transaction Processing](#high-performance-transaction-processing)
+
+### 8. [Common Concurrency Problems](#concurrency-problems)
+- [Identifying and Solving Common Issues](#identifying-and-solving-common-issues)
+
+### 9. [Interview Questions & Answers](#interview-questions)
+- [Q1: Thread vs Process differences](#q1-thread-vs-process-differences)
+- [Q2: Synchronized keyword explanation](#q2-synchronized-keyword-explanation)
+- [Q3: Thread pool benefits](#q3-thread-pool-benefits)
+- [Q4: ConcurrentHashMap vs HashMap](#q4-concurrenthashmap-vs-hashmap)
+- [Q5: Race condition prevention](#q5-race-condition-prevention)
+- [Q6: Deadlock causes and prevention](#q6-deadlock-causes-and-prevention)
+- [Q7: Volatile keyword purpose](#q7-volatile-keyword-purpose)
+- [Q8: wait() vs sleep() differences](#q8-wait-vs-sleep-differences)
+- [Q9: CountDownLatch usage](#q9-countdownlatch-usage)
+- [Q10: ThreadLocal implementation](#q10-threadlocal-implementation)
+- [Q11: CompletableFuture benefits](#q11-completablefuture-benefits)
+- [Q12: Fork-Join framework explanation](#q12-fork-join-framework-explanation)
+
+### 10. [Best Practices](#best-practices)
+- [Concurrency Best Practices for Banking Systems](#concurrency-best-practices-for-banking-systems)
+- [Summary of Best Practices](#summary-of-best-practices)
 
 ---
 
