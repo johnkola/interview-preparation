@@ -9,6 +9,20 @@
 
 ---
 
+## 📚 Comprehensive Documentation
+
+### Technical Deep Dives
+- **[Java Concurrency Guide](docs/java/JAVA_CONCURRENCY_COMPREHENSIVE.md)** - Complete concurrency patterns and banking-specific examples
+- **[Spring Boot Guide](docs/spring/SPRING_BOOT_COMPREHENSIVE.md)** - Auto-configuration, starters, and production optimization
+- **[Security Deep Dive](docs/security/SECURITY_DEEP_DIVE.md)** - OAuth 2.0, LDAP, SSO, and MFA implementations
+- **[Azure Services Guide](docs/azure/AZURE_SERVICES_GUIDE.md)** - App Service, Functions, and cloud integration
+- **[Microservices Communication](docs/microservices/MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md)** - Event-driven architecture and resilience patterns
+
+### Common References
+- **[Banking Domain Model](docs/common/BANKING_DOMAIN_MODEL.md)** - Standardized banking entities, services, and patterns used across all guides
+
+---
+
 ## 🎯 Technical Questions & Answers
 
 ### 1. Lambda Expressions in Java
@@ -81,72 +95,14 @@ executor.execute(() -> System.out.println("Async task"));
 **Answer:**
 To achieve 100% coverage, you need to test both the success path and exception path:
 
-```java
-// Controller
-@RestController
-public class UserController {
-    @Autowired
-    private UserService userService;
+**Key Testing Strategy:**
+1. **Success scenario** - Normal flow
+2. **Specific exception handling** - Business exceptions
+3. **General exception handling** - System exceptions
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
-        try {
-            User user = userService.findById(id);
-            return ResponseEntity.ok(user);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal Server Error");
-        }
-    }
-}
+**Required Test Cases:** Minimum 3 test cases covering all code paths
 
-// Test Class
-@ExtendWith(MockitoExtension.class)
-class UserControllerTest {
-
-    @InjectMocks
-    private UserController controller;
-
-    @Mock
-    private UserService userService;
-
-    @Test
-    void testGetUser_Success() {
-        // Test success path
-        User mockUser = new User(1L, "John");
-        when(userService.findById(1L)).thenReturn(mockUser);
-
-        ResponseEntity<?> response = controller.getUser(1L);
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    @Test
-    void testGetUser_UserNotFound() {
-        // Test specific exception path
-        when(userService.findById(1L))
-            .thenThrow(new UserNotFoundException("User not found"));
-
-        ResponseEntity<?> response = controller.getUser(1L);
-        assertEquals(404, response.getStatusCodeValue());
-    }
-
-    @Test
-    void testGetUser_GeneralException() {
-        // Test general exception path
-        when(userService.findById(1L))
-            .thenThrow(new RuntimeException("Database error"));
-
-        ResponseEntity<?> response = controller.getUser(1L);
-        assertEquals(500, response.getStatusCodeValue());
-    }
-}
-```
-
-**How many test cases needed**: Minimum 3 test cases:
-1. Success scenario
-2. Specific exception (UserNotFoundException)
-3. General exception scenario
+*For comprehensive testing patterns including Mockito, JUnit 5, integration testing, and test coverage strategies, see [Spring Boot Guide](docs/spring/SPRING_BOOT_COMPREHENSIVE.md#testing-strategies)*
 
 ### 4. REST Template and SSL Validation
 
@@ -209,94 +165,16 @@ public class RestTemplateConfig {
 **Q: Experience with REST APIs and security - how do you secure REST calls, please answer based on your experience.**
 
 **Answer:**
-Based on my experience, I've implemented multiple layers of security:
+Based on my experience, I've implemented multiple layers of security for REST APIs in banking environments:
 
-**1. Authentication & Authorization:**
-```java
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+**Key Security Strategies:**
+- **Authentication & Authorization**: OAuth 2.0, JWT tokens, API keys
+- **Transport Security**: HTTPS/TLS, certificate validation
+- **Rate Limiting**: Prevent abuse and DDoS attacks
+- **Input Validation**: Sanitize all user inputs
+- **Audit Logging**: Track all API access for compliance
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/api/public/**").permitAll()
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            .and()
-            .oauth2ResourceServer()
-                .jwt();
-    }
-}
-```
-
-**2. OAuth 2.0 / JWT Implementation:**
-```java
-@RestController
-@RequestMapping("/api")
-public class SecureController {
-
-    @GetMapping("/data")
-    @PreAuthorize("hasAuthority('SCOPE_read')")
-    public ResponseEntity<?> getData(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getSubject();
-        // Process request with authenticated user
-        return ResponseEntity.ok(data);
-    }
-}
-```
-
-**3. API Key Authentication:**
-```java
-@Component
-public class ApiKeyAuthFilter extends OncePerRequestFilter {
-
-    @Value("${api.key.header}")
-    private String apiKeyHeader;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain filterChain) {
-        String apiKey = request.getHeader(apiKeyHeader);
-
-        if (isValidApiKey(apiKey)) {
-            // Set authentication
-            SecurityContextHolder.getContext().setAuthentication(
-                new ApiKeyAuthentication(apiKey));
-        }
-
-        filterChain.doFilter(request, response);
-    }
-}
-```
-
-**4. Rate Limiting:**
-```java
-@Component
-public class RateLimitInterceptor implements HandlerInterceptor {
-    private final RateLimiter rateLimiter = RateLimiter.create(100.0); // 100 requests per second
-
-    @Override
-    public boolean preHandle(HttpServletRequest request,
-                           HttpServletResponse response,
-                           Object handler) {
-        if (!rateLimiter.tryAcquire()) {
-            response.setStatus(429); // Too Many Requests
-            return false;
-        }
-        return true;
-    }
-}
-```
-
-**5. Additional Security Measures:**
-- **CORS Configuration**: Restrict cross-origin requests
-- **Input Validation**: Validate all inputs to prevent injection attacks
-- **HTTPS Only**: Force SSL/TLS for all communications
-- **Security Headers**: X-Frame-Options, CSP, X-Content-Type-Options
-- **Audit Logging**: Log all API access for security monitoring
+*For comprehensive security implementations including OAuth 2.0, LDAP, SSO, and MFA patterns, see [Security Deep Dive](docs/security/SECURITY_DEEP_DIVE.md)*
 
 ---
 
@@ -321,230 +199,9 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 - Advanced dependency resolution
 - Better for complex multi-module projects
 
-```xml
-<!-- Maven Banking Project Structure -->
-<project>
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.tdbank</groupId>
-    <artifactId>banking-api</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+**For Banking Projects:** Maven is typically preferred for enterprise banking due to standardization and corporate policies.
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
-        <relativePath/>
-    </parent>
-
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <spring-cloud.version>2022.0.3</spring-cloud.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <name>tdbank/${project.artifactId}:${project.version}</name>
-                    </image>
-                </configuration>
-            </plugin>
-
-            <!-- Surefire for unit tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
-            <!-- Failsafe for integration tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- JaCoCo for code coverage -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>production</id>
-            <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <optimize>true</optimize>
-                            <debug>false</debug>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-</project>
-```
-
-```groovy
-// Gradle Banking Project (build.gradle)
-plugins {
-    id 'org.springframework.boot' version '3.1.0'
-    id 'io.spring.dependency-management' version '1.1.0'
-    id 'java'
-    id 'jacoco'
-    id 'org.sonarqube' version '4.0.0.2929'
-}
-
-group = 'com.tdbank'
-version = '1.0.0'
-sourceCompatibility = '17'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
-repositories {
-    mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-}
-
-ext {
-    set('springCloudVersion', "2022.0.3")
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.testcontainers:postgresql'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-
-// Custom tasks for different test types
-task unitTest(type: Test) {
-    useJUnitPlatform()
-    include '**/*Test.class'
-    exclude '**/*IT.class'
-    exclude '**/*IntegrationTest.class'
-}
-
-task integrationTest(type: Test) {
-    useJUnitPlatform()
-    include '**/*IT.class'
-    include '**/*IntegrationTest.class'
-    mustRunAfter unitTest
-}
-
-// Code coverage
-jacoco {
-    toolVersion = "0.8.8"
-}
-
-jacocoTestReport {
-    dependsOn test
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination file("${buildDir}/jacocoHtml")
-    }
-}
-
-// Docker image building
-bootBuildImage {
-    imageName = "tdbank/${project.name}:${project.version}"
-    environment = [
-        "BPE_DELIM_JAVA_TOOL_OPTIONS": " ",
-        "BPE_APPEND_JAVA_TOOL_OPTIONS": "-XX:+UseContainerSupport -XX:+UseG1GC"
-    ]
-}
-
-// Environment-specific builds
-task buildForProduction {
-    dependsOn clean, compileJava, processResources, bootJar
-    doLast {
-        println "Built production-ready artifact: ${jar.archiveFileName.get()}"
-    }
-}
-```
+*For complete build tool configurations, testing setups, and production optimization, see [Spring Boot Guide](docs/spring/SPRING_BOOT_COMPREHENSIVE.md#build-tools)*
 
 ### 12. Jenkins Pipeline for Banking Application
 
@@ -1333,126 +990,28 @@ public class NotificationService {
 
 **Answer:**
 
-I've implemented comprehensive microservices communication patterns for banking systems. See the complete guide in `MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md` for detailed implementations.
+I've implemented comprehensive microservices communication patterns for banking systems including synchronous REST/gRPC, asynchronous messaging with Kafka/RabbitMQ, event sourcing, CQRS, and saga patterns for distributed transactions.
 
-**Key Patterns:**
+*For complete implementations and detailed examples, see [Microservices Communication Guide](docs/microservices/MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md)*
 
-**1. Synchronous Communication:**
-- **REST with Circuit Breaker & Retry**: Resilient HTTP communication with fallback mechanisms
-- **gRPC**: High-performance, type-safe communication for internal services
-- **Service Mesh**: Istio/Envoy for traffic management and security
-
-**2. Asynchronous Communication:**
-- **Event-Driven Messaging**: RabbitMQ/Kafka for reliable event processing
-- **Publish-Subscribe**: Decoupled event distribution
-- **Message Queues**: Guaranteed delivery with dead letter queues
-
-**3. Data Consistency Patterns:**
-- **Saga Pattern**: Choreography vs Orchestration for distributed transactions
-- **Event Sourcing**: Immutable event log for audit trails
-- **CQRS**: Separate read/write models for scalability
-
-**Sample Implementation:**
-```java
-// Circuit Breaker with Resilience4j
-@Component
-public class ResilientAccountServiceClient {
-
-    private final CircuitBreaker circuitBreaker;
-    private final RetryTemplate retryTemplate;
-
-    public AccountInfo getAccountResilient(String accountNumber) {
-        return circuitBreaker.executeSupplier(() ->
-            retryTemplate.execute(context -> {
-                return accountServiceClient.getAccount(accountNumber);
-            })
-        );
-    }
-}
-
-// Event-Driven Communication with Kafka
-@Service
-public class TransactionEventPublisher {
-
-    public void publishTransactionEvent(TransactionEvent event) {
-        // Partition by account for ordering
-        String key = event.getFromAccount();
-
-        kafkaTemplate.send("banking-transaction-events", key, event)
-            .addCallback(
-                result -> log.info("Event published: {}", event.getTransactionId()),
-                failure -> handlePublishFailure(event, failure)
-            );
-    }
-}
-
-// Saga Pattern for Money Transfer
-@Component
-public class MoneyTransferSaga {
-
-    public void transferMoney(TransferRequest request) {
-        String sagaId = UUID.randomUUID().toString();
-
-        try {
-            // Step 1: Reserve funds
-            ReservationResult reservation = executeWithCompensation(
-                () -> accountService.reserveFunds(request.getFromAccount(), request.getAmount(), sagaId),
-                () -> accountService.cancelReservation(request.getFromAccount(), sagaId)
-            );
-
-            // Step 2: Credit destination
-            CreditResult credit = executeWithCompensation(
-                () -> accountService.creditAccount(request.getToAccount(), request.getAmount(), sagaId),
-                () -> accountService.reverseCredit(request.getToAccount(), sagaId)
-            );
-
-            // Step 3: Confirm transfer
-            accountService.confirmReservation(request.getFromAccount(), sagaId);
-
-            // Publish success event
-            publishTransferCompleted(sagaId, request);
-
-        } catch (Exception e) {
-            // Execute compensation chain
-            compensationManager.executeCompensations(sagaId);
-            throw new TransferFailedException("Transfer failed", e);
-        }
-    }
-}
-```
-
-**Key Design Decisions:**
-
-1. **Banking-Specific Requirements:**
-   - ACID compliance across services
-   - Audit trail for regulatory compliance
-   - High availability (99.99% uptime)
-   - Low latency for real-time transactions
-
-2. **Communication Strategy:**
-   - Synchronous for immediate consistency (account validation)
-   - Asynchronous for eventual consistency (notifications, audit logs)
-   - Event sourcing for complete transaction history
-
-3. **Resilience Patterns:**
-   - Circuit breakers prevent cascade failures
-   - Bulkhead pattern isolates critical services
-   - Timeouts and retries with exponential backoff
-   - Dead letter queues for failed messages
-
-4. **Security:**
-   - mTLS for service-to-service communication
-   - OAuth2/JWT for authentication
-   - Message encryption for sensitive data
-   - API gateway for external access
-
-The complete implementation includes detailed examples of REST clients, gRPC services, Kafka publishers/consumers, event sourcing, CQRS, and saga orchestration patterns.
+**Key Banking Communication Requirements:**
+- ACID compliance across distributed services
+- Audit trails for regulatory compliance
+- High availability (99.99% uptime)
+- Low latency for real-time transactions
+- Circuit breakers and resilience patterns
+- Event sourcing for complete transaction history
 
 ### 9. Database Design and Transaction Management
 
 **Q: How do you design database schema for high-performance banking transactions?**
 
 **Answer:**
+Key design principles include optimistic locking for concurrency, proper indexing for performance, partitioning for large tables, and ACID compliance for banking operations.
+
+*For complete banking domain model including entities, repositories, and service patterns, see [Banking Domain Model](docs/common/BANKING_DOMAIN_MODEL.md)*
+
+**High-Level Design Considerations:**
 ```sql
 -- Optimized banking schema design
 CREATE TABLE accounts (
