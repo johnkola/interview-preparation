@@ -12,16 +12,19 @@
 ## 📚 Comprehensive Documentation
 
 ### Technical Deep Dives
-- **[Java Concurrency Guide](docs/java/JAVA_CONCURRENCY_COMPREHENSIVE.md)** - Complete concurrency patterns and banking-specific examples
-- **[Spring Boot Guide](docs/spring/SPRING_BOOT_COMPREHENSIVE.md)** - Auto-configuration, starters, and production optimization
-- **[React Full-Stack Guide](docs/react/REACT_FULLSTACK_COMPREHENSIVE.md)** - Complete React development for full-stack architects
-- **[Security Deep Dive](docs/security/SECURITY_DEEP_DIVE.md)** - OAuth 2.0, LDAP, SSO, and MFA implementations
-- **[Azure Services Guide](docs/azure/AZURE_SERVICES_GUIDE.md)** - App Service, Functions, and cloud integration
-- **[Microservices Communication](docs/microservices/MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md)** - Event-driven architecture and resilience patterns
-- **[SQL Interview Questions](docs/sql/SQL_INTERVIEW_QUESTIONS.md)** - Comprehensive SQL questions with banking-specific examples
+- **[Java Collections & Streams](java/JAVA_COLLECTIONS_STREAMS.md)** - Comprehensive Collections Framework and Stream API guide
+- **[Java Concurrency Guide](java/JAVA_CONCURRENCY_COMPREHENSIVE.md)** - Complete concurrency patterns and banking-specific examples
+- **[Spring Boot Guide](spring/SPRING_BOOT_COMPREHENSIVE.md)** - Auto-configuration, starters, and production optimization
+- **[Spring Boot JPA Guide](spring/SPRING_BOOT_JPA_COMPREHENSIVE.md)** - Complete JPA configuration, entities, and banking examples
+- **[Spring Boot MongoDB Guide](spring/SPRING_BOOT_MONGODB_COMPREHENSIVE.md)** - MongoDB configuration, document modeling, and NoSQL patterns
+- **[AWS Cloud Services](aws/AWS_CLOUD_SERVICES.md)** - EC2, Lambda, RDS, and cloud architecture patterns
+- **[Azure Services Guide](azure/AZURE_SERVICES_GUIDE.md)** - App Service, Functions, and cloud integration
+- **[CI/CD Tools Guide](cicd/CICD_TOOLS_GUIDE.md)** - Jenkins, GitLab CI, GitHub Actions, and deployment pipelines
+- **[Docker Containerization](docker/DOCKER_CONTAINERIZATION.md)** - Container strategies and orchestration
+- **[Agile Development Methods](agile/AGILE_DEVELOPMENT_METHODS.md)** - Scrum, Kanban, and agile practices
 
 ### Common References
-- **[Banking Domain Model](docs/common/BANKING_DOMAIN_MODEL.md)** - Standardized banking entities, services, and patterns used across all guides
+- **[Banking Domain Model](common/BANKING_DOMAIN_MODEL.md)** - Standardized banking entities, services, and patterns used across all guides
 
 ---
 

@@ -1,4 +1,7 @@
-# React Full-Stack Developer Comprehensive Guide
+# 📱 React Development - Comprehensive Banking Interview Guide
+
+> **Complete guide to React development for banking applications**
+> Covering React fundamentals, hooks, state management, routing, forms, testing, and performance optimization
 
 ## 📖 Table of Contents
 
@@ -67,29 +70,13 @@
 - [Q42: Styling Solutions (CSS-in-JS, Tailwind)](#q42-styling-solutions-css-in-js-tailwind)
 - [Q43: Build Tools and Development](#q43-build-tools-and-development)
 
-### 12. [Full-Stack Developer Responsibilities](#full-stack-developer-responsibilities)
-- [Q44: System Architecture Design](#q44-system-architecture-design)
-- [Q45: Frontend-Backend Integration](#q45-frontend-backend-integration)
-- [Q46: Database Design and Management](#q46-database-design-and-management)
-- [Q47: DevOps and Infrastructure](#q47-devops-and-infrastructure)
-- [Q48: Code Quality and Standards](#q48-code-quality-and-standards)
-- [Q49: Team Leadership and Mentoring](#q49-team-leadership-and-mentoring)
-
-### 13. [Agile Development Methods](#agile-development-methods)
-- [Q50: Scrum Framework Implementation](#q50-scrum-framework-implementation)
-- [Q51: Sprint Planning and Estimation](#q51-sprint-planning-and-estimation)
-- [Q52: User Story Writing and Backlog Management](#q52-user-story-writing-and-backlog-management)
-- [Q53: Daily Standups and Communication](#q53-daily-standups-and-communication)
-- [Q54: Code Reviews and Pair Programming](#q54-code-reviews-and-pair-programming)
-- [Q55: Testing in Agile Environment](#q55-testing-in-agile-environment)
-- [Q56: Continuous Integration/Deployment](#q56-continuous-integrationdeployment)
-- [Q57: Retrospectives and Process Improvement](#q57-retrospectives-and-process-improvement)
-
-### 14. [Production Deployment](#production-deployment)
-- [Q58: Docker Containerization](#q58-docker-containerization)
-- [Q59: CI/CD Pipelines](#q59-cicd-pipelines)
-- [Q60: Environment Configuration](#q60-environment-configuration)
-- [Q61: Monitoring and Analytics](#q61-monitoring-and-analytics)
+### 12. [Banking-Specific React Patterns](#banking-specific-react-patterns)
+- [Q44: Financial Data Visualization](#q44-financial-data-visualization)
+- [Q45: Real-time Account Updates](#q45-real-time-account-updates)
+- [Q46: Secure Form Components](#q46-secure-form-components)
+- [Q47: Banking UI/UX Patterns](#q47-banking-ui-ux-patterns)
+- [Q48: Accessibility in Banking Apps](#q48-accessibility-in-banking-apps)
+- [Q49: Progressive Web App Features](#q49-progressive-web-app-features)
 
 ---
 
@@ -1753,829 +1740,255 @@ export default BankingDashboard;
 
 ---
 
-## 🏗️ Full-Stack Developer Responsibilities
-
-### Q44: System Architecture Design
-
-**Answer:**
-As a full-stack developer/architect, you're responsible for designing scalable, maintainable systems that serve business needs effectively.
-
-**Banking System Architecture Design:**
-
-```javascript
-// System Architecture Overview for Banking Application
-
-/**
- * BANKING SYSTEM ARCHITECTURE
- *
- * Frontend (React)
- * ├── Presentation Layer
- * │   ├── Components (UI)
- * │   ├── State Management (Redux/Context)
- * │   ├── Routing (React Router)
- * │   └── API Integration
- *
- * Backend (Spring Boot)
- * ├── API Gateway Layer
- * │   ├── Authentication/Authorization
- * │   ├── Rate Limiting
- * │   ├── Load Balancing
- * │   └── Request Routing
- * ├── Business Logic Layer
- * │   ├── Account Management Service
- * │   ├── Transaction Service
- * │   ├── Fraud Detection Service
- * │   └── Notification Service
- * ├── Data Access Layer
- * │   ├── Repository Pattern
- * │   ├── ORM (JPA/Hibernate)
- * │   └── Caching (Redis)
- *
- * Database Layer
- * ├── Primary Database (PostgreSQL)
- * ├── Cache Layer (Redis)
- * ├── Search Engine (Elasticsearch)
- * └── Message Queue (RabbitMQ/Kafka)
- *
- * Infrastructure
- * ├── Container Orchestration (Kubernetes)
- * ├── CI/CD Pipeline (Jenkins/GitHub Actions)
- * ├── Monitoring (Prometheus/Grafana)
- * └── Cloud Services (AWS/Azure)
- */
-
-// Architecture Decision Record (ADR) Template
-const architectureDecision = {
-  title: "State Management Strategy for Banking Application",
-  status: "Accepted",
-  date: "2024-01-15",
-
-  context: `
-    Banking application requires complex state management for:
-    - User authentication and sessions
-    - Account data synchronization
-    - Real-time transaction updates
-    - Offline capabilities
-    - Form state management
-  `,
-
-  decision: `
-    Use Redux Toolkit for global state management with:
-    - RTK Query for server state
-    - React Context for theme/UI state
-    - React Hook Form for form state
-    - Local storage for user preferences
-  `,
-
-  consequences: {
-    positive: [
-      "Predictable state updates",
-      "Time-travel debugging",
-      "Excellent dev tools",
-      "Clear separation of concerns"
-    ],
-    negative: [
-      "Learning curve for team",
-      "Additional boilerplate",
-      "Bundle size increase"
-    ]
-  },
-
-  alternatives: [
-    "Zustand - simpler but less tooling",
-    "React Context only - would cause performance issues",
-    "SWR/React Query - good for server state but not global client state"
-  ]
-};
-
-// System Design Patterns Implementation
-class BankingSystemArchitect {
-
-  // Microservices Architecture Pattern
-  designMicroservices() {
-    return {
-      services: [
-        {
-          name: "user-service",
-          responsibilities: ["Authentication", "User Profile", "Preferences"],
-          database: "user_db",
-          dependencies: ["notification-service"]
-        },
-        {
-          name: "account-service",
-          responsibilities: ["Account Management", "Balance Tracking"],
-          database: "account_db",
-          dependencies: ["user-service", "transaction-service"]
-        },
-        {
-          name: "transaction-service",
-          responsibilities: ["Transaction Processing", "Transfer Operations"],
-          database: "transaction_db",
-          dependencies: ["account-service", "fraud-service"]
-        },
-        {
-          name: "fraud-service",
-          responsibilities: ["Fraud Detection", "Risk Analysis"],
-          database: "fraud_db",
-          dependencies: ["transaction-service", "notification-service"]
-        },
-        {
-          name: "notification-service",
-          responsibilities: ["Email/SMS", "Push Notifications", "Alerts"],
-          database: "notification_db",
-          dependencies: []
-        }
-      ],
-
-      communicationPatterns: {
-        synchronous: "REST APIs for real-time operations",
-        asynchronous: "Message queues for event-driven updates",
-        dataSync: "Event sourcing for audit trail"
-      }
-    };
-  }
-
-  // Database Design Strategy
-  designDatabase() {
-    return {
-      strategy: "Database per Service",
-
-      databases: {
-        userDatabase: {
-          type: "PostgreSQL",
-          schema: {
-            users: ["id", "username", "email", "created_at"],
-            user_profiles: ["user_id", "first_name", "last_name", "phone"],
-            user_preferences: ["user_id", "theme", "notifications", "language"]
-          }
-        },
-
-        accountDatabase: {
-          type: "PostgreSQL",
-          schema: {
-            accounts: ["id", "user_id", "account_number", "type", "balance"],
-            account_history: ["id", "account_id", "balance", "timestamp"]
-          }
-        },
-
-        transactionDatabase: {
-          type: "PostgreSQL",
-          partitioning: "by_date", // Monthly partitions
-          schema: {
-            transactions: ["id", "from_account", "to_account", "amount", "timestamp"],
-            transaction_events: ["id", "transaction_id", "event_type", "timestamp"]
-          }
-        },
-
-        cacheLayer: {
-          type: "Redis",
-          usage: ["Session storage", "Account balances", "User preferences"]
-        },
-
-        searchEngine: {
-          type: "Elasticsearch",
-          usage: ["Transaction search", "Fraud pattern detection"]
-        }
-      }
-    };
-  }
-
-  // API Design Guidelines
-  designAPIs() {
-    return {
-      restfulPrinciples: {
-        resourceBased: true,
-        httpMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-        statusCodes: [200, 201, 400, 401, 403, 404, 500],
-
-        examples: {
-          accounts: {
-            "GET /api/accounts": "List user accounts",
-            "GET /api/accounts/{id}": "Get specific account",
-            "POST /api/accounts": "Create new account",
-            "PUT /api/accounts/{id}": "Update account",
-            "DELETE /api/accounts/{id}": "Close account"
-          },
-
-          transactions: {
-            "GET /api/accounts/{id}/transactions": "Get account transactions",
-            "POST /api/transactions/transfer": "Create money transfer",
-            "GET /api/transactions/{id}": "Get transaction details"
-          }
-        }
-      },
-
-      apiVersioning: {
-        strategy: "URL versioning",
-        format: "/api/v1/accounts",
-        deprecationPolicy: "Support N-1 versions"
-      },
-
-      documentation: {
-        tool: "OpenAPI/Swagger",
-        includeExamples: true,
-        generateSDKs: true
-      }
-    };
-  }
-
-  // Security Architecture
-  designSecurity() {
-    return {
-      authentication: {
-        strategy: "JWT with refresh tokens",
-        provider: "OAuth 2.0 / OpenID Connect",
-        mfa: "TOTP/SMS verification"
-      },
-
-      authorization: {
-        model: "RBAC (Role-Based Access Control)",
-        roles: ["CUSTOMER", "ADMIN", "SUPPORT", "AUDITOR"],
-        permissions: "Fine-grained resource permissions"
-      },
-
-      dataProtection: {
-        encryption: {
-          atRest: "AES-256",
-          inTransit: "TLS 1.3",
-          applicationLevel: "Field-level encryption for PII"
-        },
-        compliance: ["PCI DSS", "GDPR", "SOX"]
-      },
-
-      apiSecurity: {
-        rateLimiting: "100 requests/minute per user",
-        cors: "Strict origin policies",
-        headers: ["HSTS", "CSP", "X-Frame-Options"]
-      }
-    };
-  }
-
-  // Performance Requirements
-  designPerformance() {
-    return {
-      requirements: {
-        responseTime: {
-          accountBalance: "< 200ms",
-          transactionHistory: "< 500ms",
-          moneyTransfer: "< 1s"
-        },
-
-        throughput: {
-          concurrentUsers: "10,000+",
-          transactionsPerSecond: "1,000+",
-          dailyTransactions: "1M+"
-        },
-
-        availability: {
-          uptime: "99.9%",
-          plannedDowntime: "< 4 hours/month",
-          disasterRecovery: "RTO: 1 hour, RPO: 15 minutes"
-        }
-      },
-
-      optimizationStrategies: {
-        caching: {
-          browser: "Static assets, API responses",
-          cdn: "Global content distribution",
-          application: "Redis for frequently accessed data",
-          database: "Query result caching"
-        },
-
-        scaling: {
-          horizontal: "Auto-scaling based on load",
-          vertical: "Performance monitoring and optimization",
-          database: "Read replicas, connection pooling"
-        }
-      }
-    };
-  }
-}
-
-// Frontend Architecture Patterns
-const frontendArchitecture = {
-
-  componentArchitecture: {
-    structure: `
-      src/
-      ├── components/           # Reusable UI components
-      │   ├── atoms/           # Basic building blocks
-      │   ├── molecules/       # Component combinations
-      │   ├── organisms/       # Complex components
-      │   └── templates/       # Page layouts
-      ├── pages/               # Route components
-      ├── hooks/               # Custom React hooks
-      ├── services/            # API integration
-      ├── store/               # State management
-      ├── utils/               # Helper functions
-      ├── types/               # TypeScript definitions
-      └── constants/           # Application constants
-    `,
-
-    designPrinciples: [
-      "Single Responsibility",
-      "Composition over Inheritance",
-      "Props down, Events up",
-      "Separation of Concerns"
-    ]
-  },
-
-  stateManagement: {
-    global: "Redux Toolkit for application state",
-    server: "RTK Query for server state",
-    local: "useState/useReducer for component state",
-    forms: "React Hook Form for form state",
-    url: "React Router for navigation state"
-  },
-
-  codeOrganization: {
-    featureSlicing: "Group by business domain",
-    sharedComponents: "Reusable across features",
-    utilities: "Pure functions, no side effects",
-    constants: "Environment and configuration"
-  }
-};
-
-export { BankingSystemArchitect, frontendArchitecture };
-```
-
-### Q45: Frontend-Backend Integration
-
-**Answer:**
-Seamless integration between React frontend and Spring Boot backend requires careful API design, error handling, and state synchronization.
-
-**Complete Integration Strategy:**
-
-```javascript
-// API Service Layer for Frontend-Backend Integration
-
-class BankingAPIService {
-  constructor() {
-    this.baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
-    this.authToken = null;
-    this.refreshToken = null;
-
-    // Configure Axios instance
-    this.client = axios.create({
-      baseURL: this.baseURL,
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    this.setupInterceptors();
-  }
-
-  setupInterceptors() {
-    // Request interceptor for auth tokens
-    this.client.interceptors.request.use(
-      (config) => {
-        if (this.authToken) {
-          config.headers.Authorization = `Bearer ${this.authToken}`;
-        }
-
-        // Add request ID for tracing
-        config.headers['X-Request-ID'] = this.generateRequestId();
-
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    // Response interceptor for token refresh
-    this.client.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          try {
-            await this.refreshAuthToken();
-            originalRequest.headers.Authorization = `Bearer ${this.authToken}`;
-            return this.client(originalRequest);
-          } catch (refreshError) {
-            this.handleAuthFailure();
-            return Promise.reject(refreshError);
-          }
-        }
-
-        return Promise.reject(this.transformError(error));
-      }
-    );
-  }
-
-  // Authentication Methods
-  async login(credentials) {
-    try {
-      const response = await this.client.post('/auth/login', credentials);
-
-      this.authToken = response.data.accessToken;
-      this.refreshToken = response.data.refreshToken;
-
-      // Store tokens securely
-      this.storeTokens(response.data);
-
-      return {
-        success: true,
-        user: response.data.user,
-        tokens: response.data
-      };
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  async refreshAuthToken() {
-    if (!this.refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
-    try {
-      const response = await this.client.post('/auth/refresh', {
-        refreshToken: this.refreshToken
-      });
-
-      this.authToken = response.data.accessToken;
-      this.storeTokens(response.data);
-
-      return response.data;
-    } catch (error) {
-      this.clearTokens();
-      throw error;
-    }
-  }
-
-  // Account Management APIs
-  async getAccounts() {
-    try {
-      const response = await this.client.get('/accounts');
-      return response.data;
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  async getAccountDetails(accountId) {
-    try {
-      const response = await this.client.get(`/accounts/${accountId}`);
-      return response.data;
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  async getAccountBalance(accountId) {
-    try {
-      const response = await this.client.get(`/accounts/${accountId}/balance`);
-      return response.data;
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  // Transaction APIs
-  async getTransactions(accountId, params = {}) {
-    try {
-      const queryParams = new URLSearchParams({
-        page: params.page || 0,
-        size: params.size || 20,
-        sort: params.sort || 'date,desc',
-        ...params.filters
-      });
-
-      const response = await this.client.get(
-        `/accounts/${accountId}/transactions?${queryParams}`
-      );
-
-      return {
-        transactions: response.data.content,
-        pagination: {
-          page: response.data.number,
-          size: response.data.size,
-          totalElements: response.data.totalElements,
-          totalPages: response.data.totalPages,
-          hasNext: !response.data.last,
-          hasPrevious: !response.data.first
-        }
-      };
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  async createTransfer(transferData) {
-    try {
-      // Validate transfer data before sending
-      this.validateTransferData(transferData);
-
-      const response = await this.client.post('/transactions/transfer', {
-        fromAccountId: transferData.fromAccount,
-        toAccountId: transferData.toAccount,
-        amount: parseFloat(transferData.amount),
-        description: transferData.description,
-        scheduledDate: transferData.scheduledDate || null
-      });
-
-      return response.data;
-    } catch (error) {
-      throw this.transformError(error);
-    }
-  }
-
-  // WebSocket Integration for Real-time Updates
-  connectWebSocket(userId) {
-    return new Promise((resolve, reject) => {
-      const wsUrl = `${this.baseURL.replace('http', 'ws')}/ws/user/${userId}`;
-
-      this.websocket = new WebSocket(wsUrl, [], {
-        headers: {
-          Authorization: `Bearer ${this.authToken}`
-        }
-      });
-
-      this.websocket.onopen = () => {
-        console.log('WebSocket connected');
-        resolve(this.websocket);
-      };
-
-      this.websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        reject(error);
-      };
-
-      this.websocket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          this.handleWebSocketMessage(message);
-        } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
-        }
-      };
-
-      this.websocket.onclose = () => {
-        console.log('WebSocket disconnected');
-        // Attempt to reconnect after 5 seconds
-        setTimeout(() => {
-          if (this.authToken) {
-            this.connectWebSocket(userId);
-          }
-        }, 5000);
-      };
-    });
-  }
-
-  // Error Handling and Transformation
-  transformError(error) {
-    if (error.response) {
-      // Server responded with error status
-      const { status, data } = error.response;
-
-      switch (status) {
-        case 400:
-          return {
-            type: 'VALIDATION_ERROR',
-            message: data.message || 'Invalid request data',
-            details: data.errors || [],
-            status
-          };
-        case 401:
-          return {
-            type: 'AUTHENTICATION_ERROR',
-            message: 'Authentication failed',
-            status
-          };
-        case 403:
-          return {
-            type: 'AUTHORIZATION_ERROR',
-            message: 'Access denied',
-            status
-          };
-        case 404:
-          return {
-            type: 'NOT_FOUND_ERROR',
-            message: data.message || 'Resource not found',
-            status
-          };
-        case 409:
-          return {
-            type: 'CONFLICT_ERROR',
-            message: data.message || 'Resource conflict',
-            status
-          };
-        case 500:
-          return {
-            type: 'SERVER_ERROR',
-            message: 'Internal server error',
-            status
-          };
-        default:
-          return {
-            type: 'API_ERROR',
-            message: data.message || 'An error occurred',
-            status
-          };
-      }
-    } else if (error.request) {
-      // Network error
-      return {
-        type: 'NETWORK_ERROR',
-        message: 'Network connection failed',
-        details: 'Please check your internet connection'
-      };
-    } else {
-      // Other error
-      return {
-        type: 'UNKNOWN_ERROR',
-        message: error.message || 'An unexpected error occurred'
-      };
-    }
-  }
-
-  // Utility Methods
-  validateTransferData(data) {
-    const errors = [];
-
-    if (!data.fromAccount) errors.push('Source account is required');
-    if (!data.toAccount) errors.push('Destination account is required');
-    if (data.fromAccount === data.toAccount) errors.push('Source and destination accounts must be different');
-
-    const amount = parseFloat(data.amount);
-    if (!amount || amount <= 0) errors.push('Amount must be greater than 0');
-    if (amount > 10000) errors.push('Amount cannot exceed $10,000 per transaction');
-
-    if (!data.description?.trim()) errors.push('Description is required');
-
-    if (errors.length > 0) {
-      throw {
-        type: 'VALIDATION_ERROR',
-        message: 'Invalid transfer data',
-        details: errors
-      };
-    }
-  }
-
-  generateRequestId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  storeTokens(tokens) {
-    // Use secure storage (consider encryption for sensitive data)
-    localStorage.setItem('banking_access_token', tokens.accessToken);
-    localStorage.setItem('banking_refresh_token', tokens.refreshToken);
-    localStorage.setItem('banking_token_expiry', tokens.expiresAt);
-  }
-
-  clearTokens() {
-    this.authToken = null;
-    this.refreshToken = null;
-    localStorage.removeItem('banking_access_token');
-    localStorage.removeItem('banking_refresh_token');
-    localStorage.removeItem('banking_token_expiry');
-  }
-
-  handleAuthFailure() {
-    this.clearTokens();
-    window.location.href = '/login';
-  }
-
-  handleWebSocketMessage(message) {
-    // Dispatch events that components can listen to
-    const event = new CustomEvent('banking-websocket-message', {
-      detail: message
-    });
-    window.dispatchEvent(event);
-  }
-}
-
-// React Hook for API Integration
-export const useApiService = () => {
-  const apiService = useRef(new BankingAPIService()).current;
-
-  const [loading, setLoading] = useState(false);
+## 🏦 Banking-Specific React Patterns
+
+### Q44: Financial Data Visualization
+
+**Question**: How do you create secure and accessible financial data visualizations in React for banking applications?
+
+**Answer**:
+
+Financial data visualization requires careful attention to security, accuracy, and accessibility.
+
+**Banking Chart Components with Security:**
+
+```jsx
+import React, { useState, useEffect, useMemo } from 'react';
+import { Line, Bar, Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const BankingChartDashboard = ({ accountId, dateRange }) => {
+  const [chartData, setChartData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userPermissions, setUserPermissions] = useState({});
 
-  const executeRequest = useCallback(async (apiCall) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await apiCall();
-      return result;
-    } catch (err) {
-      setError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return {
-    apiService,
-    loading,
-    error,
-    executeRequest
-  };
-};
-
-// Integration with React Components
-const AccountDashboard = () => {
-  const { apiService, loading, error, executeRequest } = useApiService();
-  const [accounts, setAccounts] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-
-  // Load initial data
+  // Secure data fetching with permission checks
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const accountsData = await executeRequest(() => apiService.getAccounts());
-        setAccounts(accountsData);
+    const fetchChartData = async () => {
+      setLoading(true);
+      setError(null);
 
-        if (accountsData.length > 0) {
-          setSelectedAccount(accountsData[0]);
+      try {
+        // Check user permissions before fetching sensitive data
+        const permissionsResponse = await fetch('/api/user/permissions');
+        const permissions = await permissionsResponse.json();
+        setUserPermissions(permissions);
+
+        if (!permissions.canViewDetailedAnalytics) {
+          throw new Error('Insufficient permissions to view detailed analytics');
         }
-      } catch (err) {
-        console.error('Failed to load accounts:', err);
-      }
-    };
 
-    loadData();
-  }, [apiService, executeRequest]);
-
-  // Load transactions when account changes
-  useEffect(() => {
-    if (!selectedAccount) return;
-
-    const loadTransactions = async () => {
-      try {
-        const transactionData = await executeRequest(() =>
-          apiService.getTransactions(selectedAccount.id, { size: 50 })
-        );
-        setTransactions(transactionData.transactions);
-      } catch (err) {
-        console.error('Failed to load transactions:', err);
-      }
-    };
-
-    loadTransactions();
-  }, [selectedAccount, apiService, executeRequest]);
-
-  // WebSocket for real-time updates
-  useEffect(() => {
-    const connectWebSocket = async () => {
-      try {
-        await apiService.connectWebSocket('current-user-id');
-
-        // Listen for WebSocket messages
-        const handleMessage = (event) => {
-          const message = event.detail;
-
-          if (message.type === 'TRANSACTION_UPDATE') {
-            // Update transactions in real-time
-            setTransactions(prev => [message.transaction, ...prev]);
-
-            // Update account balance
-            setAccounts(prev =>
-              prev.map(account =>
-                account.id === message.transaction.accountId
-                  ? { ...account, balance: message.newBalance }
-                  : account
-              )
-            );
+        const response = await fetch(
+          `/api/accounts/${accountId}/analytics?range=${dateRange}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+              'X-Requested-With': 'XMLHttpRequest'
+            }
           }
-        };
+        );
 
-        window.addEventListener('banking-websocket-message', handleMessage);
+        if (!response.ok) {
+          throw new Error('Failed to fetch chart data');
+        }
 
-        return () => {
-          window.removeEventListener('banking-websocket-message', handleMessage);
-        };
+        const data = await response.json();
+        setChartData(data);
+
       } catch (err) {
-        console.error('WebSocket connection failed:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    connectWebSocket();
-  }, [apiService]);
+    if (accountId && dateRange) {
+      fetchChartData();
+    }
+  }, [accountId, dateRange]);
 
-  if (loading && accounts.length === 0) {
-    return <div>Loading accounts...</div>;
+  // Account balance trend chart
+  const balanceChartData = useMemo(() => {
+    if (!chartData?.balanceHistory) return null;
+
+    return {
+      labels: chartData.balanceHistory.map(item =>
+        new Date(item.date).toLocaleDateString()
+      ),
+      datasets: [
+        {
+          label: 'Account Balance',
+          data: chartData.balanceHistory.map(item => item.balance),
+          borderColor: '#10B981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.1,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+        }
+      ]
+    };
+  }, [chartData]);
+
+  // Transaction category breakdown
+  const categoryChartData = useMemo(() => {
+    if (!chartData?.categoryBreakdown) return null;
+
+    const colors = [
+      '#EF4444', '#F97316', '#EAB308', '#22C55E',
+      '#06B6D4', '#3B82F6', '#8B5CF6', '#EC4899'
+    ];
+
+    return {
+      labels: chartData.categoryBreakdown.map(item => item.category),
+      datasets: [
+        {
+          data: chartData.categoryBreakdown.map(item => Math.abs(item.amount)),
+          backgroundColor: colors.slice(0, chartData.categoryBreakdown.length),
+          borderWidth: 2,
+          borderColor: '#fff',
+        }
+      ]
+    };
+  }, [chartData]);
+
+  // Monthly spending comparison
+  const spendingChartData = useMemo(() => {
+    if (!chartData?.monthlySpending) return null;
+
+    return {
+      labels: chartData.monthlySpending.map(item => item.month),
+      datasets: [
+        {
+          label: 'Income',
+          data: chartData.monthlySpending.map(item => item.income),
+          backgroundColor: '#22C55E',
+          borderColor: '#16A34A',
+          borderWidth: 1,
+        },
+        {
+          label: 'Expenses',
+          data: chartData.monthlySpending.map(item => Math.abs(item.expenses)),
+          backgroundColor: '#EF4444',
+          borderColor: '#DC2626',
+          borderWidth: 1,
+        }
+      ]
+    };
+  }, [chartData]);
+
+  // Accessible chart options
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 14
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderColor: '#374151',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        callbacks: {
+          label: function(context) {
+            const value = context.parsed.y;
+            return `${context.dataset.label}: $${value.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return '$' + value.toLocaleString();
+          }
+        }
+      }
+    },
+    // Accessibility enhancements
+    onHover: (event, activeElements) => {
+      if (activeElements.length > 0) {
+        const element = activeElements[0];
+        const datasetLabel = element.dataset.label;
+        const value = element.parsed.y;
+
+        // Announce data point for screen readers
+        const announcement = `${datasetLabel}: $${value.toLocaleString()}`;
+
+        // Update aria-live region
+        const liveRegion = document.getElementById('chart-live-region');
+        if (liveRegion) {
+          liveRegion.textContent = announcement;
+        }
+      }
+    }
+  };
+
+  // Security: Mask sensitive data for unauthorized users
+  const getMaskedValue = (value, permission) => {
+    if (!permission) {
+      return '***';
+    }
+    return value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="chart-dashboard loading">
+        <div className="skeleton-loader"></div>
+        <div className="skeleton-loader"></div>
+        <div className="skeleton-loader"></div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="error-container">
-        <h3>Error: {error.message}</h3>
-        {error.details && (
-          <ul>
-            {error.details.map((detail, index) => (
-              <li key={index}>{detail}</li>
-            ))}
-          </ul>
-        )}
+      <div className="chart-dashboard error" role="alert">
+        <h3>Error Loading Chart Data</h3>
+        <p>{error}</p>
         <button onClick={() => window.location.reload()}>
           Retry
         </button>
@@ -2584,1001 +1997,2770 @@ const AccountDashboard = () => {
   }
 
   return (
-    <div className="account-dashboard">
-      {/* Account selection and transaction display */}
+    <div className="banking-chart-dashboard">
+      {/* Accessibility: Live region for screen readers */}
+      <div
+        id="chart-live-region"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      ></div>
+
+      {/* Account Balance Trend */}
+      <div className="chart-container">
+        <div className="chart-header">
+          <h3>Account Balance Trend</h3>
+          <div className="chart-controls">
+            <label htmlFor="balance-period">Period:</label>
+            <select id="balance-period" defaultValue="30d">
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="90d">Last 90 days</option>
+              <option value="1y">Last year</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="chart-wrapper" style={{ height: '300px' }}>
+          {balanceChartData && (
+            <Line
+              data={balanceChartData}
+              options={chartOptions}
+              aria-label="Account balance trend over time"
+            />
+          )}
+        </div>
+
+        {/* Data table for accessibility */}
+        <details className="chart-data-table">
+          <summary>View balance data table</summary>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chartData?.balanceHistory?.map((item, index) => (
+                <tr key={index}>
+                  <td>{new Date(item.date).toLocaleDateString()}</td>
+                  <td>{getMaskedValue(item.balance, userPermissions.canViewDetailedAnalytics)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </details>
+      </div>
+
+      {/* Category Breakdown */}
+      <div className="chart-container">
+        <div className="chart-header">
+          <h3>Spending by Category</h3>
+          <p className="chart-description">
+            Distribution of expenses across different categories
+          </p>
+        </div>
+
+        <div className="chart-wrapper" style={{ height: '300px' }}>
+          {categoryChartData && (
+            <Pie
+              data={categoryChartData}
+              options={{
+                ...chartOptions,
+                plugins: {
+                  ...chartOptions.plugins,
+                  legend: {
+                    position: 'right',
+                    labels: {
+                      generateLabels: function(chart) {
+                        const data = chart.data;
+                        return data.labels.map((label, index) => ({
+                          text: `${label}: ${getMaskedValue(
+                            data.datasets[0].data[index],
+                            userPermissions.canViewDetailedAnalytics
+                          )}`,
+                          fillStyle: data.datasets[0].backgroundColor[index],
+                          strokeStyle: data.datasets[0].borderColor,
+                          lineWidth: data.datasets[0].borderWidth
+                        }));
+                      }
+                    }
+                  }
+                }
+              }}
+              aria-label="Spending breakdown by category"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Monthly Income vs Expenses */}
+      <div className="chart-container">
+        <div className="chart-header">
+          <h3>Monthly Income vs Expenses</h3>
+          <div className="chart-summary">
+            <div className="summary-item">
+              <span className="label">Average Monthly Income:</span>
+              <span className="value income">
+                {getMaskedValue(
+                  chartData?.averageIncome || 0,
+                  userPermissions.canViewDetailedAnalytics
+                )}
+              </span>
+            </div>
+            <div className="summary-item">
+              <span className="label">Average Monthly Expenses:</span>
+              <span className="value expense">
+                {getMaskedValue(
+                  Math.abs(chartData?.averageExpenses || 0),
+                  userPermissions.canViewDetailedAnalytics
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="chart-wrapper" style={{ height: '300px' }}>
+          {spendingChartData && (
+            <Bar
+              data={spendingChartData}
+              options={chartOptions}
+              aria-label="Monthly income versus expenses comparison"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Export Options */}
+      {userPermissions.canExportData && (
+        <div className="chart-actions">
+          <button
+            onClick={() => exportChartData('pdf')}
+            className="export-button"
+          >
+            Export as PDF
+          </button>
+          <button
+            onClick={() => exportChartData('excel')}
+            className="export-button"
+          >
+            Export to Excel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default AccountDashboard;
-```
-
----
-
-## 🔄 Agile Development Methods
-
-### Q50: Scrum Framework Implementation
-
-**Answer:**
-Implementing Scrum effectively requires understanding roles, ceremonies, and artifacts while adapting to team needs.
-
-**Complete Scrum Implementation for Banking Team:**
-
-```javascript
-// Scrum Framework Implementation for Banking Development Team
-
-class ScrumFramework {
-  constructor(teamConfig) {
-    this.team = teamConfig;
-    this.currentSprint = null;
-    this.productBacklog = [];
-    this.sprintBacklog = [];
-    this.burndownChart = [];
-  }
-
-  // Scrum Roles Definition
-  defineRoles() {
-    return {
-      productOwner: {
-        name: "Sarah Johnson",
-        responsibilities: [
-          "Define product vision and roadmap",
-          "Prioritize product backlog",
-          "Write and refine user stories",
-          "Accept/reject sprint deliverables",
-          "Stakeholder communication",
-          "ROI maximization"
-        ],
-        bankingFocus: [
-          "Customer experience optimization",
-          "Regulatory compliance requirements",
-          "Business value prioritization",
-          "Market competitive analysis"
-        ]
-      },
-
-      scrumMaster: {
-        name: "Mike Chen",
-        responsibilities: [
-          "Facilitate scrum ceremonies",
-          "Remove team impediments",
-          "Coach team on agile practices",
-          "Protect team from distractions",
-          "Metrics tracking and reporting",
-          "Continuous improvement facilitation"
-        ],
-        bankingFocus: [
-          "Risk management processes",
-          "Security compliance coaching",
-          "Cross-team coordination",
-          "Regulatory change management"
-        ]
-      },
-
-      developmentTeam: {
-        members: [
-          {
-            name: "Alex Rodriguez",
-            role: "Full-Stack Developer",
-            specialization: "React/Spring Boot",
-            capacity: 40, // hours per sprint
-            currentVelocity: 13 // story points per sprint
-          },
-          {
-            name: "Lisa Wang",
-            role: "Frontend Developer",
-            specialization: "React/TypeScript",
-            capacity: 40,
-            currentVelocity: 15
-          },
-          {
-            name: "David Kim",
-            role: "Backend Developer",
-            specialization: "Spring Boot/Microservices",
-            capacity: 40,
-            currentVelocity: 12
-          },
-          {
-            name: "Emma Thompson",
-            role: "QA Engineer",
-            specialization: "Test Automation",
-            capacity: 40,
-            currentVelocity: 10
-          }
-        ],
-        collectiveResponsibilities: [
-          "Sprint planning participation",
-          "Daily standup attendance",
-          "Sprint goal achievement",
-          "Code quality maintenance",
-          "Knowledge sharing",
-          "Cross-functional collaboration"
-        ]
+// Export functionality
+const exportChartData = async (format) => {
+  try {
+    const response = await fetch(`/api/charts/export?format=${format}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
       }
-    };
-  }
+    });
 
-  // Sprint Planning Implementation
-  planSprint(sprintNumber, sprintDuration = 14) {
-    const sprintGoal = this.defineSprintGoal(sprintNumber);
-    const teamCapacity = this.calculateTeamCapacity();
-    const prioritizedBacklog = this.prioritizeBacklog();
-
-    const sprint = {
-      number: sprintNumber,
-      goal: sprintGoal,
-      duration: sprintDuration, // days
-      startDate: new Date(),
-      endDate: new Date(Date.now() + sprintDuration * 24 * 60 * 60 * 1000),
-      capacity: teamCapacity,
-      selectedStories: [],
-      commitmentPoints: 0
-    };
-
-    // Sprint Planning Meeting Part 1: What can we deliver?
-    const part1Planning = this.conductSprintPlanningPart1(
-      prioritizedBacklog,
-      teamCapacity
-    );
-
-    // Sprint Planning Meeting Part 2: How will we deliver it?
-    const part2Planning = this.conductSprintPlanningPart2(
-      part1Planning.selectedStories
-    );
-
-    sprint.selectedStories = part2Planning.storiesWithTasks;
-    sprint.commitmentPoints = part2Planning.totalPoints;
-
-    this.currentSprint = sprint;
-    return sprint;
-  }
-
-  defineSprintGoal(sprintNumber) {
-    // Banking-specific sprint goals
-    const sprintGoals = {
-      1: "Implement secure user authentication and account overview",
-      2: "Complete transaction history and filtering functionality",
-      3: "Build money transfer feature with fraud detection",
-      4: "Add account management and statement generation",
-      5: "Implement real-time notifications and alerts"
-    };
-
-    return sprintGoals[sprintNumber] || "Continue product development";
-  }
-
-  calculateTeamCapacity() {
-    const team = this.defineRoles().developmentTeam;
-
-    return team.members.reduce((total, member) => {
-      // Account for planned time off, meetings, etc.
-      const availableHours = member.capacity * 0.8; // 80% availability
-      return total + availableHours;
-    }, 0);
-  }
-
-  conductSprintPlanningPart1(backlog, capacity) {
-    const selectedStories = [];
-    let totalPoints = 0;
-    let remainingCapacity = capacity;
-
-    for (const story of backlog) {
-      if (story.points <= remainingCapacity && totalPoints + story.points <= 50) {
-        selectedStories.push(story);
-        totalPoints += story.points;
-        remainingCapacity -= story.points;
-      }
+    if (!response.ok) {
+      throw new Error('Export failed');
     }
 
-    return { selectedStories, totalPoints };
-  }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `banking-analytics.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
 
-  conductSprintPlanningPart2(stories) {
-    const storiesWithTasks = stories.map(story => ({
-      ...story,
-      tasks: this.breakDownIntoTasks(story),
-      owner: this.assignStoryOwner(story),
-      acceptanceCriteria: this.refineAcceptanceCriteria(story)
-    }));
-
-    const totalPoints = storiesWithTasks.reduce(
-      (sum, story) => sum + story.points, 0
-    );
-
-    return { storiesWithTasks, totalPoints };
-  }
-
-  breakDownIntoTasks(story) {
-    // Example task breakdown for banking story
-    const commonTasks = {
-      "User Login Feature": [
-        "Design login form UI component (4h)",
-        "Implement form validation (3h)",
-        "Integrate with authentication API (5h)",
-        "Add error handling and loading states (3h)",
-        "Write unit tests for login component (4h)",
-        "Create integration tests (3h)",
-        "Security review and penetration testing (6h)"
-      ],
-
-      "Account Balance Display": [
-        "Create balance component design (2h)",
-        "Implement real-time balance updates (6h)",
-        "Add balance history tracking (4h)",
-        "Format currency display properly (2h)",
-        "Implement error states for balance fetch (3h)",
-        "Add accessibility features (3h)",
-        "Performance optimization (4h)"
-      ],
-
-      "Money Transfer Feature": [
-        "Design transfer form UI (6h)",
-        "Implement amount validation (4h)",
-        "Add account selection logic (5h)",
-        "Integrate with transfer API (8h)",
-        "Add confirmation flow (4h)",
-        "Implement fraud detection integration (6h)",
-        "Create transaction receipt (3h)",
-        "Add comprehensive error handling (5h)"
-      ]
-    };
-
-    return commonTasks[story.title] || [
-      "Analysis and design (2h)",
-      "Implementation (8h)",
-      "Testing (4h)",
-      "Code review (2h)"
-    ];
-  }
-
-  // Daily Standup Structure
-  conductDailyStandup() {
-    const standupStructure = {
-      timeBox: "15 minutes maximum",
-      participants: "Development team members only",
-      format: "Round-robin, each member shares",
-
-      questions: [
-        "What did you accomplish yesterday?",
-        "What will you work on today?",
-        "What impediments are blocking you?"
-      ],
-
-      scrumMasterNotes: [
-        "Note any impediments mentioned",
-        "Identify stories at risk",
-        "Schedule follow-up conversations",
-        "Update burndown chart"
-      ],
-
-      bankingSpecificTopics: [
-        "Security review status",
-        "Compliance checkpoint updates",
-        "Integration testing progress",
-        "Production deployment readiness"
-      ]
-    };
-
-    // Sample standup responses
-    const standupResponses = {
-      "Alex Rodriguez": {
-        yesterday: "Completed user authentication API integration, resolved CORS issues",
-        today: "Will work on account balance real-time updates, pair with Lisa on WebSocket implementation",
-        impediments: "Waiting for security team approval on JWT token configuration"
-      },
-
-      "Lisa Wang": {
-        yesterday: "Finished login form UI, added form validation with React Hook Form",
-        today: "Will implement WebSocket connection for real-time balance updates",
-        impediments: "None currently"
-      },
-
-      "David Kim": {
-        yesterday: "Implemented transfer API endpoints, added fraud detection hooks",
-        today: "Will work on transaction history pagination and database optimization",
-        impediments: "Database migration taking longer than expected, may need DBA consultation"
-      },
-
-      "Emma Thompson": {
-        yesterday: "Set up automated testing pipeline, created test data fixtures",
-        today: "Will write integration tests for authentication flow",
-        impediments: "Test environment is unstable, coordinating with DevOps team"
-      }
-    };
-
-    return { standupStructure, standupResponses };
-  }
-
-  // Sprint Review Implementation
-  conductSprintReview() {
-    const reviewStructure = {
-      timeBox: "2 hours for 2-week sprint",
-      participants: [
-        "Development team",
-        "Product owner",
-        "Stakeholders",
-        "End users (when possible)"
-      ],
-
-      agenda: [
-        {
-          item: "Sprint goal review",
-          duration: "10 minutes",
-          owner: "Product Owner"
-        },
-        {
-          item: "Demonstration of completed features",
-          duration: "60 minutes",
-          owner: "Development Team"
-        },
-        {
-          item: "Stakeholder feedback collection",
-          duration: "30 minutes",
-          owner: "Product Owner"
-        },
-        {
-          item: "Product backlog updates",
-          duration: "20 minutes",
-          owner: "Product Owner"
-        }
-      ],
-
-      demonstrationScript: {
-        "User Authentication": {
-          scenario: "New customer onboarding",
-          steps: [
-            "Navigate to registration page",
-            "Enter customer information",
-            "Verify email/SMS confirmation",
-            "Set up security questions",
-            "Complete first login"
-          ],
-          successCriteria: [
-            "Registration completes without errors",
-            "Security validations work correctly",
-            "User can successfully log in",
-            "Session management functions properly"
-          ]
-        },
-
-        "Account Dashboard": {
-          scenario: "Existing customer checking accounts",
-          steps: [
-            "Log in to application",
-            "View account summary",
-            "Check real-time balances",
-            "Review recent transactions"
-          ],
-          successCriteria: [
-            "All accounts display correctly",
-            "Balances are accurate and current",
-            "Transaction history loads quickly",
-            "UI is responsive and accessible"
-          ]
-        }
-      }
-    };
-
-    return reviewStructure;
-  }
-
-  // Sprint Retrospective Implementation
-  conductSprintRetrospective() {
-    const retrospectiveFormat = {
-      timeBox: "1.5 hours for 2-week sprint",
-      participants: "Development team + Scrum Master",
-
-      activities: [
-        {
-          name: "Check-in",
-          duration: "10 minutes",
-          description: "Team mood and energy level assessment"
-        },
-        {
-          name: "Data gathering",
-          duration: "30 minutes",
-          technique: "Start-Stop-Continue",
-          description: "Collect facts about the sprint"
-        },
-        {
-          name: "Generate insights",
-          duration: "20 minutes",
-          technique: "5 Whys analysis",
-          description: "Understand root causes"
-        },
-        {
-          name: "Decide what to do",
-          duration: "20 minutes",
-          description: "Create action items with owners"
-        },
-        {
-          name: "Close retrospective",
-          duration: "10 minutes",
-          description: "Commit to action items"
-        }
-      ],
-
-      startStopContinueExample: {
-        start: [
-          "Daily code reviews for critical banking features",
-          "Security-focused peer programming sessions",
-          "Regular stakeholder check-ins during development",
-          "Automated security testing in CI/CD pipeline"
-        ],
-
-        stop: [
-          "Last-minute requirement changes without impact analysis",
-          "Deploying to production without proper testing",
-          "Skipping documentation for complex business logic",
-          "Working in isolation on shared components"
-        ],
-
-        continue: [
-          "Pair programming for complex features",
-          "Daily standups with focused updates",
-          "Test-driven development practices",
-          "Regular refactoring and code cleanup"
-        ]
-      },
-
-      actionItems: [
-        {
-          action: "Implement pre-commit hooks for security scanning",
-          owner: "David Kim",
-          dueDate: "Next sprint planning",
-          success_criteria: "All commits automatically scanned for security issues"
-        },
-        {
-          action: "Create shared component library documentation",
-          owner: "Lisa Wang",
-          dueDate: "End of next sprint",
-          success_criteria: "All components have usage examples and props documentation"
-        },
-        {
-          action: "Set up automated performance testing",
-          owner: "Emma Thompson",
-          dueDate: "Next sprint",
-          success_criteria: "Performance tests run on every deployment"
-        }
-      ]
-    };
-
-    return retrospectiveFormat;
-  }
-
-  // Metrics and Tracking
-  trackSprintMetrics() {
-    return {
-      velocityTracking: {
-        lastSprints: [
-          { sprint: 1, plannedPoints: 45, completedPoints: 42, velocity: 42 },
-          { sprint: 2, plannedPoints: 48, completedPoints: 50, velocity: 50 },
-          { sprint: 3, plannedPoints: 50, completedPoints: 47, velocity: 47 },
-          { sprint: 4, plannedPoints: 49, completedPoints: 51, velocity: 51 }
-        ],
-        averageVelocity: 47.5,
-        velocityTrend: "stable"
-      },
-
-      burndownChart: {
-        sprintLength: 10, // working days
-        totalPoints: 50,
-        dailyProgress: [
-          { day: 1, remaining: 50, ideal: 45 },
-          { day: 2, remaining: 47, ideal: 40 },
-          { day: 3, remaining: 43, ideal: 35 },
-          { day: 4, remaining: 38, ideal: 30 },
-          { day: 5, remaining: 35, ideal: 25 },
-          { day: 6, remaining: 28, ideal: 20 },
-          { day: 7, remaining: 22, ideal: 15 },
-          { day: 8, remaining: 15, ideal: 10 },
-          { day: 9, remaining: 8, ideal: 5 },
-          { day: 10, remaining: 0, ideal: 0 }
-        ]
-      },
-
-      qualityMetrics: {
-        bugRatePerStory: 0.8,
-        testCoverage: 85,
-        codeReviewParticipation: 100,
-        customerSatisfactionScore: 4.2
-      }
-    };
-  }
-}
-
-// Banking-Specific Agile Practices
-const bankingAgilePractices = {
-
-  complianceIntegration: {
-    definitionOfDone: [
-      "Code complete and peer reviewed",
-      "Unit tests written and passing (>90% coverage)",
-      "Integration tests passing",
-      "Security review completed",
-      "Accessibility compliance verified",
-      "Performance benchmarks met",
-      "Documentation updated",
-      "Product owner acceptance",
-      "Compliance checklist completed",
-      "Security penetration test passed"
-    ],
-
-    regulatoryConsiderations: [
-      "PCI DSS compliance for payment processing",
-      "GDPR data protection requirements",
-      "SOX financial reporting controls",
-      "AML (Anti-Money Laundering) checks",
-      "KYC (Know Your Customer) validation"
-    ]
-  },
-
-  riskManagement: {
-    riskCategories: [
-      "Security vulnerabilities",
-      "Data privacy breaches",
-      "Regulatory non-compliance",
-      "System availability issues",
-      "Performance degradation"
-    ],
-
-    mitigationStrategies: [
-      "Regular security audits",
-      "Automated compliance testing",
-      "Disaster recovery testing",
-      "Load testing and monitoring",
-      "Code quality gates"
-    ]
+  } catch (error) {
+    alert(`Export failed: ${error.message}`);
   }
 };
 
-export { ScrumFramework, bankingAgilePractices };
-```
-
-### Q51: Sprint Planning and Estimation
-
-**Answer:**
-Effective sprint planning requires proper estimation techniques, capacity planning, and collaborative decision-making.
-
-**Comprehensive Sprint Planning Process:**
-
-```javascript
-// Sprint Planning and Estimation Framework
-
-class SprintPlanningFramework {
-  constructor() {
-    this.estimationTechniques = this.initializeEstimationTechniques();
-    this.planningPokerCards = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
-    this.teamCapacity = {};
-    this.historicalVelocity = [];
-  }
-
-  // Story Point Estimation using Planning Poker
-  conductPlanningPoker(userStory) {
-    const planningSession = {
-      story: userStory,
-      participants: [
-        "Alex (Full-Stack Dev)",
-        "Lisa (Frontend Dev)",
-        "David (Backend Dev)",
-        "Emma (QA Engineer)"
-      ],
-
-      rounds: [
-        {
-          roundNumber: 1,
-          estimates: {
-            "Alex": 8,
-            "Lisa": 5,
-            "David": 13,
-            "Emma": 8
-          },
-          discussion: [
-            "David: This involves complex microservice integration",
-            "Lisa: Frontend seems straightforward, mostly form handling",
-            "Alex: Database changes might be more complex than expected",
-            "Emma: Testing will require multiple integration scenarios"
-          ]
-        },
-        {
-          roundNumber: 2,
-          estimates: {
-            "Alex": 8,
-            "Lisa": 8,
-            "David": 8,
-            "Emma": 8
-          },
-          finalEstimate: 8,
-          confidence: "High - team consensus reached"
-        }
-      ]
-    };
-
-    return planningSession;
-  }
-
-  // Banking User Stories with Detailed Estimation
-  estimateBankingUserStories() {
-    const userStories = [
-      {
-        id: "US-001",
-        title: "Account Balance Real-time Updates",
-        description: "As a customer, I want to see my account balance update in real-time so that I have accurate financial information",
-
-        acceptanceCriteria: [
-          "Balance updates immediately after transaction",
-          "WebSocket connection handles disconnections gracefully",
-          "Balance display shows loading state during updates",
-          "Historical balance changes are tracked",
-          "Works across multiple browser tabs"
-        ],
-
-        tasks: [
-          "Implement WebSocket connection management (5h)",
-          "Create balance update event handlers (3h)",
-          "Add loading states and error handling (4h)",
-          "Write unit tests for WebSocket integration (4h)",
-          "Implement connection retry logic (3h)",
-          "Add integration tests (4h)"
-        ],
-
-        estimationFactors: {
-          complexity: "Medium - WebSocket integration",
-          unknowns: "Low - team has WebSocket experience",
-          dependencies: "Medium - requires backend WebSocket endpoint",
-          riskLevel: "Medium - real-time features can be tricky"
-        },
-
-        storyPoints: 8,
-        estimationReasoning: [
-          "WebSocket integration is well-understood pattern",
-          "Frontend state management is straightforward",
-          "Good test coverage required for real-time features",
-          "Similar to previous real-time features delivered"
-        ]
-      },
-
-      {
-        id: "US-002",
-        title: "Money Transfer with Fraud Detection",
-        description: "As a customer, I want to transfer money between accounts with automatic fraud detection to ensure secure transactions",
-
-        acceptanceCriteria: [
-          "Transfer form validates all required fields",
-          "Fraud detection API is called before processing",
-          "High-risk transfers require additional verification",
-          "Transfer confirmation includes transaction ID",
-          "Email notification sent for completed transfers",
-          "Transaction history updated immediately"
-        ],
-
-        tasks: [
-          "Design transfer form with validation (6h)",
-          "Implement fraud detection API integration (8h)",
-          "Add two-factor authentication for high-risk transfers (10h)",
-          "Create transfer confirmation flow (4h)",
-          "Implement email notification system (6h)",
-          "Add comprehensive error handling (5h)",
-          "Write unit and integration tests (8h)",
-          "Security review and penetration testing (6h)"
-        ],
-
-        estimationFactors: {
-          complexity: "High - Multiple system integrations",
-          unknowns: "Medium - Fraud detection API requirements unclear",
-          dependencies: "High - Requires fraud service, email service, auth service",
-          riskLevel: "High - Financial transaction security critical"
-        },
-
-        storyPoints: 21,
-        estimationReasoning: [
-          "Complex integration with multiple external services",
-          "Security requirements are extensive",
-          "Two-factor authentication adds complexity",
-          "Comprehensive testing required for financial features",
-          "Similar features took 2-3 weeks in previous projects"
-        ]
-      },
-
-      {
-        id: "US-003",
-        title: "Transaction History with Advanced Filtering",
-        description: "As a customer, I want to filter and search my transaction history to easily find specific transactions",
-
-        acceptanceCriteria: [
-          "Filter by date range, amount range, transaction type",
-          "Search by description or merchant name",
-          "Sort by date, amount, or description",
-          "Export filtered results to PDF/CSV",
-          "Pagination for large result sets",
-          "Save filter preferences"
-        ],
-
-        tasks: [
-          "Create filter UI components (6h)",
-          "Implement search functionality (4h)",
-          "Add sorting and pagination (5h)",
-          "Create PDF/CSV export feature (8h)",
-          "Implement filter preference saving (4h)",
-          "Optimize database queries for performance (6h)",
-          "Add comprehensive testing (6h)"
-        ],
-
-        estimationFactors: {
-          complexity: "Medium - Standard CRUD with search",
-          unknowns: "Low - Well-understood requirements",
-          dependencies: "Low - Mostly frontend work with existing APIs",
-          riskLevel: "Low - Standard feature set"
-        },
-
-        storyPoints: 13,
-        estimationReasoning: [
-          "Advanced filtering requires careful UI design",
-          "PDF/CSV export adds some complexity",
-          "Database query optimization needed for performance",
-          "Standard web application features with some extra polish"
-        ]
-      }
-    ];
-
-    return userStories;
-  }
-
-  // Capacity Planning for Team
-  calculateTeamCapacity(sprintLength = 10) { // 10 working days
-    const teamMembers = [
-      {
-        name: "Alex Rodriguez",
-        role: "Full-Stack Developer",
-        hoursPerDay: 8,
-        availability: 0.85, // 85% (accounting for meetings, email, etc.)
-        plannedTimeOff: 0, // days off during sprint
-        commitments: {
-          codeReviews: 4, // hours per sprint
-          mentoring: 2,
-          architecture: 3
-        }
-      },
-      {
-        name: "Lisa Wang",
-        role: "Frontend Developer",
-        hoursPerDay: 8,
-        availability: 0.90,
-        plannedTimeOff: 1, // 1 day off
-        commitments: {
-          codeReviews: 3,
-          designSystem: 4,
-          accessibility: 2
-        }
-      },
-      {
-        name: "David Kim",
-        role: "Backend Developer",
-        hoursPerDay: 8,
-        availability: 0.80, // Lower due to production support
-        plannedTimeOff: 0,
-        commitments: {
-          productionSupport: 8,
-          codeReviews: 4,
-          databaseOptimization: 3
-        }
-      },
-      {
-        name: "Emma Thompson",
-        role: "QA Engineer",
-        hoursPerDay: 8,
-        availability: 0.85,
-        plannedTimeOff: 2, // 2 days off
-        commitments: {
-          testAutomation: 6,
-          bugTriage: 4,
-          testPlanning: 3
-        }
-      }
-    ];
-
-    const capacityCalculation = teamMembers.map(member => {
-      const workingDays = sprintLength - member.plannedTimeOff;
-      const totalHours = workingDays * member.hoursPerDay * member.availability;
-      const commitmentHours = Object.values(member.commitments).reduce((a, b) => a + b, 0);
-      const availableHours = totalHours - commitmentHours;
-
-      return {
-        ...member,
-        workingDays,
-        totalHours: Math.round(totalHours),
-        commitmentHours,
-        availableHours: Math.round(availableHours),
-        storyPointsCapacity: Math.round(availableHours / 6) // Assuming 6 hours per story point
-      };
-    });
-
-    const totalCapacity = {
-      totalHours: capacityCalculation.reduce((sum, member) => sum + member.availableHours, 0),
-      totalStoryPoints: capacityCalculation.reduce((sum, member) => sum + member.storyPointsCapacity, 0)
-    };
-
-    return {
-      individuals: capacityCalculation,
-      team: totalCapacity
-    };
-  }
-
-  // Velocity-Based Planning
-  calculateVelocityBasedCommitment() {
-    const historicalVelocity = [
-      { sprint: 1, planned: 45, completed: 42 },
-      { sprint: 2, planned: 48, completed: 50 },
-      { sprint: 3, planned: 50, completed: 47 },
-      { sprint: 4, planned: 49, completed: 51 },
-      { sprint: 5, planned: 52, completed: 49 }
-    ];
-
-    const analysis = {
-      averageVelocity: historicalVelocity.reduce((sum, sprint) => sum + sprint.completed, 0) / historicalVelocity.length,
-
-      consistencyAnalysis: {
-        standardDeviation: this.calculateStandardDeviation(historicalVelocity.map(s => s.completed)),
-        stabilityRating: "Good", // Based on low standard deviation
-      },
-
-      trendAnalysis: {
-        trend: "Stable with slight improvement",
-        confidence: "High",
-        recommendedCommitment: 48 // Conservative based on historical data
-      },
-
-      factorsAffectingVelocity: [
-        "Team member vacation schedules",
-        "Complexity of current sprint backlog",
-        "Technical debt paydown efforts",
-        "External dependencies and blockers",
-        "New team member onboarding"
-      ]
-    };
-
-    return analysis;
-  }
-
-  // Sprint Commitment Process
-  finalizeSprintCommitment(stories, teamCapacity, velocityData) {
-    const commitmentProcess = {
-      step1_initialSelection: {
-        description: "Select stories based on priority and estimated effort",
-        selectedStories: stories.slice(0, 4), // Top 4 priority stories
-        totalPoints: stories.slice(0, 4).reduce((sum, story) => sum + story.storyPoints, 0)
-      },
-
-      step2_capacityValidation: {
-        description: "Validate selection against team capacity",
-        teamCapacityPoints: teamCapacity.team.totalStoryPoints,
-        selectionFitsCapacity: true,
-        adjustmentsNeeded: false
-      },
-
-      step3_velocityCheck: {
-        description: "Compare against historical velocity",
-        historicalAverage: velocityData.averageVelocity,
-        currentCommitment: 50,
-        riskAssessment: "Medium - slightly above average",
-        mitigationStrategies: [
-          "Identify stories that could be descoped if needed",
-          "Plan for pair programming on complex features",
-          "Prepare contingency plan for technical blockers"
-        ]
-      },
-
-      step4_finalCommitment: {
-        sprintGoal: "Deliver core money transfer functionality with enhanced security",
-        committedStories: [
-          "US-001: Account Balance Real-time Updates (8 pts)",
-          "US-002: Money Transfer with Fraud Detection (21 pts)",
-          "US-003: Transaction History with Advanced Filtering (13 pts)",
-          "US-004: Mobile App Performance Optimization (8 pts)"
-        ],
-        totalCommitment: 50,
-        confidence: "Medium-High",
-        riskFactors: [
-          "Fraud detection API integration complexity",
-          "Mobile performance testing requirements",
-          "Potential scope creep on security features"
-        ]
-      }
-    };
-
-    return commitmentProcess;
-  }
-
-  // Sprint Planning Meeting Structure
-  structureSprintPlanningMeeting() {
-    return {
-      duration: "4 hours for 2-week sprint",
-      participants: ["Product Owner", "Scrum Master", "Development Team"],
-
-      agenda: [
-        {
-          section: "Sprint Planning Part 1 - What?",
-          duration: "2 hours",
-          activities: [
-            {
-              activity: "Review sprint goal and product backlog",
-              duration: "30 minutes",
-              owner: "Product Owner",
-              outcome: "Shared understanding of priorities"
-            },
-            {
-              activity: "Estimate and select user stories",
-              duration: "60 minutes",
-              owner: "Development Team",
-              outcome: "Initial story selection"
-            },
-            {
-              activity: "Validate capacity and velocity",
-              duration: "20 minutes",
-              owner: "Scrum Master",
-              outcome: "Realistic commitment level"
-            },
-            {
-              activity: "Finalize sprint backlog",
-              duration: "10 minutes",
-              owner: "Product Owner + Team",
-              outcome: "Committed sprint backlog"
-            }
-          ]
-        },
-
-        {
-          section: "Sprint Planning Part 2 - How?",
-          duration: "2 hours",
-          activities: [
-            {
-              activity: "Break down stories into tasks",
-              duration: "60 minutes",
-              owner: "Development Team",
-              outcome: "Detailed task breakdown"
-            },
-            {
-              activity: "Identify dependencies and risks",
-              duration: "30 minutes",
-              owner: "Development Team",
-              outcome: "Risk mitigation plan"
-            },
-            {
-              activity: "Assign initial story ownership",
-              duration: "20 minutes",
-              owner: "Development Team",
-              outcome: "Clear accountability"
-            },
-            {
-              activity: "Confirm sprint commitment",
-              duration: "10 minutes",
-              owner: "Entire Team",
-              outcome: "Team consensus on deliverables"
-            }
-          ]
-        }
-      ],
-
-      outputs: [
-        "Sprint goal statement",
-        "Sprint backlog with estimated stories",
-        "Task breakdown for each story",
-        "Sprint capacity plan",
-        "Risk and dependency identification",
-        "Definition of Done confirmation"
-      ]
-    };
-  }
-
-  // Utility function for standard deviation
-  calculateStandardDeviation(values) {
-    const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-    const squaredDifferences = values.map(value => Math.pow(value - mean, 2));
-    const variance = squaredDifferences.reduce((sum, diff) => sum + diff, 0) / values.length;
-    return Math.sqrt(variance);
-  }
-}
-
-export { SprintPlanningFramework };
+export default BankingChartDashboard;
 ```
 
 ---
+
+### Q45: Real-time Account Updates
+
+**Question**: How do you implement real-time account balance and transaction updates in React using WebSockets?
+
+**Answer**:
+
+Real-time updates are crucial for banking applications to provide accurate, up-to-date information.
+
+**Real-time Banking Component:**
+
+```jsx
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+const RealTimeBankingAccount = ({ accountId, userId }) => {
+  const [account, setAccount] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState('disconnected');
+  const [notifications, setNotifications] = useState([]);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const wsRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
+  const reconnectAttempts = useRef(0);
+  const maxReconnectAttempts = 5;
+
+  // WebSocket connection management
+  const connectWebSocket = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const wsUrl = `wss://banking-api.company.com/ws/accounts/${accountId}?token=${token}`;
+
+      wsRef.current = new WebSocket(wsUrl);
+
+      wsRef.current.onopen = () => {
+        console.log('WebSocket connected');
+        setConnectionStatus('connected');
+        reconnectAttempts.current = 0;
+
+        // Send authentication message
+        wsRef.current.send(JSON.stringify({
+          type: 'AUTH',
+          userId: userId,
+          accountId: accountId,
+          timestamp: new Date().toISOString()
+        }));
+      };
+
+      wsRef.current.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          handleWebSocketMessage(message);
+        } catch (error) {
+          console.error('Failed to parse WebSocket message:', error);
+        }
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setConnectionStatus('error');
+      };
+
+      wsRef.current.onclose = (event) => {
+        console.log('WebSocket disconnected:', event.code, event.reason);
+        setConnectionStatus('disconnected');
+
+        // Attempt reconnection with exponential backoff
+        if (reconnectAttempts.current < maxReconnectAttempts) {
+          const delay = Math.pow(2, reconnectAttempts.current) * 1000;
+          reconnectTimeoutRef.current = setTimeout(() => {
+            reconnectAttempts.current++;
+            connectWebSocket();
+          }, delay);
+        }
+      };
+
+    } catch (error) {
+      console.error('Failed to establish WebSocket connection:', error);
+      setConnectionStatus('error');
+    }
+  }, [accountId, userId]);
+
+  // Handle different types of WebSocket messages
+  const handleWebSocketMessage = useCallback((message) => {
+    switch (message.type) {
+      case 'BALANCE_UPDATE':
+        setAccount(prevAccount => ({
+          ...prevAccount,
+          balance: message.newBalance,
+          lastUpdated: message.timestamp
+        }));
+
+        // Show notification for significant balance changes
+        if (Math.abs(message.balanceChange) > 100) {
+          addNotification({
+            type: 'info',
+            title: 'Balance Updated',
+            message: `Your balance changed by $${Math.abs(message.balanceChange).toFixed(2)}`,
+            timestamp: message.timestamp
+          });
+        }
+        break;
+
+      case 'NEW_TRANSACTION':
+        const newTransaction = message.transaction;
+
+        setTransactions(prevTransactions => {
+          const updated = [newTransaction, ...prevTransactions];
+          return updated.slice(0, 50); // Keep only recent 50 transactions
+        });
+
+        // Update account balance
+        setAccount(prevAccount => ({
+          ...prevAccount,
+          balance: newTransaction.newBalance,
+          lastUpdated: newTransaction.timestamp
+        }));
+
+        // Show transaction notification
+        addNotification({
+          type: newTransaction.amount > 0 ? 'success' : 'warning',
+          title: newTransaction.amount > 0 ? 'Money Received' : 'Payment Made',
+          message: `${newTransaction.description}: $${Math.abs(newTransaction.amount).toFixed(2)}`,
+          timestamp: newTransaction.timestamp
+        });
+
+        // Play sound notification if page is not visible
+        if (!isVisible && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification('New Bank Transaction', {
+            body: `${newTransaction.description}: $${Math.abs(newTransaction.amount).toFixed(2)}`,
+            icon: '/banking-icon.png',
+            tag: 'banking-transaction'
+          });
+        }
+        break;
+
+      case 'SECURITY_ALERT':
+        addNotification({
+          type: 'error',
+          title: 'Security Alert',
+          message: message.alert,
+          timestamp: message.timestamp,
+          persistent: true
+        });
+
+        // Force authentication refresh for critical security alerts
+        if (message.severity === 'critical') {
+          handleSecurityAlert(message);
+        }
+        break;
+
+      case 'ACCOUNT_LOCKED':
+        setAccount(prevAccount => ({
+          ...prevAccount,
+          status: 'locked',
+          lockReason: message.reason
+        }));
+
+        addNotification({
+          type: 'error',
+          title: 'Account Locked',
+          message: message.reason,
+          timestamp: message.timestamp,
+          persistent: true
+        });
+        break;
+
+      case 'MAINTENANCE_NOTICE':
+        addNotification({
+          type: 'warning',
+          title: 'Scheduled Maintenance',
+          message: `Banking services will be unavailable from ${message.startTime} to ${message.endTime}`,
+          timestamp: message.timestamp,
+          persistent: true
+        });
+        break;
+
+      case 'HEARTBEAT':
+        // Server heartbeat to keep connection alive
+        wsRef.current?.send(JSON.stringify({
+          type: 'HEARTBEAT_ACK',
+          timestamp: new Date().toISOString()
+        }));
+        break;
+
+      default:
+        console.log('Unknown message type:', message.type);
+    }
+  }, [isVisible]);
+
+  // Add notification with auto-dismiss
+  const addNotification = useCallback((notification) => {
+    const id = Date.now() + Math.random();
+    const notificationWithId = { ...notification, id };
+
+    setNotifications(prev => [...prev, notificationWithId]);
+
+    // Auto-dismiss non-persistent notifications
+    if (!notification.persistent) {
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }, 5000);
+    }
+  }, []);
+
+  // Handle security alerts
+  const handleSecurityAlert = useCallback((alertMessage) => {
+    // Redirect to security verification page
+    if (alertMessage.requiresReauth) {
+      localStorage.setItem('security_redirect', window.location.pathname);
+      window.location.href = '/security/verify';
+    }
+  }, []);
+
+  // Initialize WebSocket connection
+  useEffect(() => {
+    connectWebSocket();
+
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, [connectWebSocket]);
+
+  // Track page visibility for notifications
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Request notification permissions
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        console.log('Notification permission:', permission);
+      });
+    }
+  }, []);
+
+  // Manual refresh function
+  const refreshAccount = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/accounts/${accountId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to refresh account data');
+      }
+
+      const accountData = await response.json();
+      setAccount(accountData);
+
+      addNotification({
+        type: 'success',
+        title: 'Account Refreshed',
+        message: 'Account data has been updated',
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      addNotification({
+        type: 'error',
+        title: 'Refresh Failed',
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [accountId, addNotification]);
+
+  // Connection status indicator
+  const ConnectionStatus = () => (
+    <div className={`connection-status ${connectionStatus}`}>
+      <div className="status-indicator"></div>
+      <span className="status-text">
+        {connectionStatus === 'connected' && 'Live Updates Active'}
+        {connectionStatus === 'disconnected' && 'Reconnecting...'}
+        {connectionStatus === 'error' && 'Connection Error'}
+      </span>
+
+      {connectionStatus !== 'connected' && (
+        <button
+          onClick={connectWebSocket}
+          className="reconnect-button"
+          aria-label="Reconnect to live updates"
+        >
+          Reconnect
+        </button>
+      )}
+    </div>
+  );
+
+  // Notification component
+  const NotificationList = () => (
+    <div className="notification-list">
+      {notifications.map(notification => (
+        <div
+          key={notification.id}
+          className={`notification ${notification.type}`}
+          role="alert"
+        >
+          <div className="notification-header">
+            <strong>{notification.title}</strong>
+            <button
+              onClick={() => setNotifications(prev =>
+                prev.filter(n => n.id !== notification.id)
+              )}
+              className="dismiss-button"
+              aria-label="Dismiss notification"
+            >
+              ×
+            </button>
+          </div>
+          <div className="notification-body">
+            {notification.message}
+          </div>
+          <div className="notification-time">
+            {new Date(notification.timestamp).toLocaleTimeString()}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (!account) {
+    return (
+      <div className="account-loading">
+        <div className="spinner"></div>
+        <p>Loading account information...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="realtime-banking-account">
+      {/* Connection Status */}
+      <ConnectionStatus />
+
+      {/* Notifications */}
+      <NotificationList />
+
+      {/* Account Information */}
+      <div className="account-header">
+        <div className="account-info">
+          <h2>{account.name}</h2>
+          <p className="account-number">Account ending in {account.number.slice(-4)}</p>
+          <div className={`account-status ${account.status}`}>
+            Status: {account.status}
+          </div>
+        </div>
+
+        <div className="account-balance">
+          <div className="balance-label">Current Balance</div>
+          <div className="balance-amount">
+            ${account.balance?.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </div>
+          <div className="last-updated">
+            Last updated: {account.lastUpdated ?
+              new Date(account.lastUpdated).toLocaleString() :
+              'Unknown'
+            }
+          </div>
+        </div>
+
+        <div className="account-actions">
+          <button
+            onClick={refreshAccount}
+            className="refresh-button"
+            aria-label="Manually refresh account data"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Real-time Transaction Feed */}
+      <div className="transaction-feed">
+        <div className="feed-header">
+          <h3>Live Transaction Feed</h3>
+          <div className="feed-controls">
+            <label>
+              <input
+                type="checkbox"
+                defaultChecked
+                onChange={(e) => {
+                  // Toggle real-time updates
+                  if (e.target.checked) {
+                    connectWebSocket();
+                  } else {
+                    wsRef.current?.close();
+                  }
+                }}
+              />
+              Real-time updates
+            </label>
+          </div>
+        </div>
+
+        <div className="transaction-list">
+          {transactions.length === 0 ? (
+            <div className="no-transactions">
+              <p>No recent transactions</p>
+            </div>
+          ) : (
+            transactions.map(transaction => (
+              <div
+                key={transaction.id}
+                className={`transaction-item ${transaction.type} ${
+                  transaction.isNew ? 'new-transaction' : ''
+                }`}
+              >
+                <div className="transaction-time">
+                  {new Date(transaction.timestamp).toLocaleTimeString()}
+                </div>
+                <div className="transaction-details">
+                  <div className="transaction-description">
+                    {transaction.description}
+                  </div>
+                  <div className="transaction-reference">
+                    Ref: {transaction.reference}
+                  </div>
+                </div>
+                <div className={`transaction-amount ${transaction.type}`}>
+                  {transaction.amount > 0 ? '+' : ''}
+                  ${transaction.amount.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Account locked overlay */}
+      {account.status === 'locked' && (
+        <div className="account-locked-overlay">
+          <div className="locked-message">
+            <h3>Account Temporarily Locked</h3>
+            <p>{account.lockReason}</p>
+            <button onClick={() => window.location.href = '/support'}>
+              Contact Support
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RealTimeBankingAccount;
+```
+
+---
+
+### Q46: Secure Form Components
+
+**Question**: How do you implement secure form components for banking applications with validation, sanitization, and security measures?
+
+**Answer**:
+
+Banking forms require robust security, validation, and user experience considerations.
+
+**Secure Banking Form Implementation:**
+
+```jsx
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import DOMPurify from 'dompurify';
+
+// Validation schema for money transfer
+const transferSchema = yup.object().shape({
+  fromAccount: yup.string()
+    .required('Please select a source account')
+    .matches(/^ACC\d{10}$/, 'Invalid account format'),
+
+  toAccount: yup.string()
+    .required('Please select a destination account')
+    .matches(/^ACC\d{10}$/, 'Invalid account format')
+    .test('different-accounts', 'Cannot transfer to the same account', function(value) {
+      return value !== this.parent.fromAccount;
+    }),
+
+  amount: yup.number()
+    .required('Please enter an amount')
+    .positive('Amount must be positive')
+    .min(0.01, 'Minimum transfer amount is $0.01')
+    .max(50000, 'Maximum transfer amount is $50,000 per transaction')
+    .test('two-decimal', 'Amount can have maximum 2 decimal places', function(value) {
+      return Number.isInteger(value * 100);
+    }),
+
+  description: yup.string()
+    .required('Please enter a description')
+    .min(3, 'Description must be at least 3 characters')
+    .max(100, 'Description cannot exceed 100 characters')
+    .matches(/^[a-zA-Z0-9\s\-.,!?']*$/, 'Description contains invalid characters'),
+
+  scheduledDate: yup.date()
+    .nullable()
+    .min(new Date(), 'Scheduled date cannot be in the past')
+    .max(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), 'Cannot schedule more than 90 days ahead'),
+
+  purpose: yup.string()
+    .required('Please select a purpose')
+    .oneOf(['personal', 'business', 'family', 'bills', 'other'], 'Invalid purpose'),
+
+  // Security fields
+  authPin: yup.string()
+    .required('Please enter your PIN')
+    .matches(/^\d{4,6}$/, 'PIN must be 4-6 digits')
+});
+
+const SecureBankingTransferForm = ({ userAccounts, onSubmit, onCancel }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [securityToken, setSecurityToken] = useState(null);
+  const [attempts, setAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [transferData, setTransferData] = useState(null);
+
+  const formRef = useRef(null);
+  const amountInputRef = useRef(null);
+  const submitTimeRef = useRef(null);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors, isValid, dirtyFields },
+    reset,
+    clearErrors
+  } = useForm({
+    resolver: yupResolver(transferSchema),
+    mode: 'onChange',
+    defaultValues: {
+      fromAccount: '',
+      toAccount: '',
+      amount: '',
+      description: '',
+      scheduledDate: '',
+      purpose: '',
+      authPin: ''
+    }
+  });
+
+  const watchedAmount = watch('amount');
+  const watchedFromAccount = watch('fromAccount');
+  const watchedToAccount = watch('toAccount');
+
+  // Generate security token on component mount
+  useEffect(() => {
+    const generateSecurityToken = async () => {
+      try {
+        const response = await fetch('/api/security/token', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSecurityToken(data.token);
+        }
+      } catch (error) {
+        console.error('Failed to generate security token:', error);
+      }
+    };
+
+    generateSecurityToken();
+  }, []);
+
+  // Anti-automation measures
+  useEffect(() => {
+    submitTimeRef.current = Date.now();
+  }, []);
+
+  // Input sanitization
+  const sanitizeInput = useCallback((value, field) => {
+    if (typeof value !== 'string') return value;
+
+    // Remove potentially dangerous characters
+    let sanitized = DOMPurify.sanitize(value, { ALLOWED_TAGS: [] });
+
+    // Field-specific sanitization
+    switch (field) {
+      case 'amount':
+        // Only allow numbers and decimal point
+        sanitized = sanitized.replace(/[^0-9.]/g, '');
+
+        // Ensure only one decimal point
+        const parts = sanitized.split('.');
+        if (parts.length > 2) {
+          sanitized = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        // Limit decimal places to 2
+        if (parts[1] && parts[1].length > 2) {
+          sanitized = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+        break;
+
+      case 'description':
+        // Remove HTML tags and limit special characters
+        sanitized = sanitized.replace(/<[^>]*>/g, '');
+        sanitized = sanitized.replace(/[<>{}]/g, '');
+        break;
+
+      case 'authPin':
+        // Only digits
+        sanitized = sanitized.replace(/\D/g, '');
+        break;
+
+      default:
+        break;
+    }
+
+    return sanitized;
+  }, []);
+
+  // Secure form submission
+  const onFormSubmit = useCallback(async (data) => {
+    // Prevent rapid submissions
+    const timeSinceMount = Date.now() - submitTimeRef.current;
+    if (timeSinceMount < 2000) {
+      alert('Please wait before submitting');
+      return;
+    }
+
+    // Check if form is locked due to failed attempts
+    if (isLocked) {
+      alert('Form is temporarily locked due to multiple failed attempts');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Sanitize all input data
+      const sanitizedData = Object.keys(data).reduce((acc, key) => {
+        acc[key] = sanitizeInput(data[key], key);
+        return acc;
+      }, {});
+
+      // Validate transaction limits
+      const fromAccount = userAccounts.find(acc => acc.id === sanitizedData.fromAccount);
+      if (!fromAccount) {
+        throw new Error('Invalid source account');
+      }
+
+      if (fromAccount.balance < parseFloat(sanitizedData.amount)) {
+        throw new Error('Insufficient funds');
+      }
+
+      // Add security metadata
+      const transferRequest = {
+        ...sanitizedData,
+        securityToken,
+        deviceFingerprint: await generateDeviceFingerprint(),
+        timestamp: new Date().toISOString(),
+        sessionId: localStorage.getItem('session_id'),
+        userAgent: navigator.userAgent,
+        ipAddress: await getUserIP() // Would need to implement
+      };
+
+      // Store for confirmation
+      setTransferData(transferRequest);
+      setShowConfirmation(true);
+
+    } catch (error) {
+      setAttempts(prev => prev + 1);
+
+      if (attempts >= 2) {
+        setIsLocked(true);
+        setTimeout(() => {
+          setIsLocked(false);
+          setAttempts(0);
+        }, 300000); // 5 minute lockout
+      }
+
+      alert(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [securityToken, userAccounts, attempts, isLocked, sanitizeInput]);
+
+  // Confirm and execute transfer
+  const confirmTransfer = useCallback(async () => {
+    if (!transferData) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/transfers', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': securityToken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(transferData)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Transfer failed');
+      }
+
+      const result = await response.json();
+
+      // Clear sensitive data
+      reset();
+      setTransferData(null);
+      setShowConfirmation(false);
+
+      // Clear auth PIN from memory
+      setValue('authPin', '');
+
+      // Call parent callback
+      onSubmit(result);
+
+      alert(`Transfer successful! Reference: ${result.referenceNumber}`);
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [transferData, securityToken, reset, setValue, onSubmit]);
+
+  // Amount formatting helper
+  const formatAmount = useCallback((event) => {
+    const value = event.target.value;
+    const sanitized = sanitizeInput(value, 'amount');
+    setValue('amount', sanitized, { shouldValidate: true });
+  }, [setValue, sanitizeInput]);
+
+  // Quick amount buttons
+  const setQuickAmount = useCallback((amount) => {
+    setValue('amount', amount.toString(), { shouldValidate: true });
+    amountInputRef.current?.focus();
+  }, [setValue]);
+
+  // Generate device fingerprint for security
+  const generateDeviceFingerprint = async () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.font = '14px Arial';
+    ctx.fillText('Banking security fingerprint', 2, 2);
+
+    return {
+      screen: `${screen.width}x${screen.height}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      language: navigator.language,
+      platform: navigator.platform,
+      canvasFingerprint: canvas.toDataURL(),
+      userAgent: navigator.userAgent.substring(0, 100) // Truncate for security
+    };
+  };
+
+  // Auto-save draft (encrypted)
+  useEffect(() => {
+    const saveDraft = () => {
+      const values = getValues();
+      if (values.fromAccount || values.toAccount || values.amount) {
+        const draft = {
+          ...values,
+          authPin: '' // Never save PIN
+        };
+
+        // Encrypt and save to sessionStorage
+        sessionStorage.setItem('transfer_draft', JSON.stringify(draft));
+      }
+    };
+
+    const timer = setTimeout(saveDraft, 2000);
+    return () => clearTimeout(timer);
+  }, [watchedAmount, watchedFromAccount, watchedToAccount, getValues]);
+
+  // Load draft on mount
+  useEffect(() => {
+    const loadDraft = () => {
+      try {
+        const draft = sessionStorage.getItem('transfer_draft');
+        if (draft) {
+          const parsed = JSON.parse(draft);
+          Object.keys(parsed).forEach(key => {
+            if (parsed[key] && key !== 'authPin') {
+              setValue(key, parsed[key]);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load draft:', error);
+      }
+    };
+
+    loadDraft();
+  }, [setValue]);
+
+  if (showConfirmation && transferData) {
+    return (
+      <div className="transfer-confirmation">
+        <div className="confirmation-header">
+          <h3>Confirm Transfer</h3>
+          <p>Please review the details below:</p>
+        </div>
+
+        <div className="confirmation-details">
+          <div className="detail-row">
+            <span className="label">From:</span>
+            <span className="value">
+              {userAccounts.find(acc => acc.id === transferData.fromAccount)?.name}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="label">To:</span>
+            <span className="value">
+              {userAccounts.find(acc => acc.id === transferData.toAccount)?.name}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="label">Amount:</span>
+            <span className="value amount">
+              ${parseFloat(transferData.amount).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="label">Description:</span>
+            <span className="value">{transferData.description}</span>
+          </div>
+          {transferData.scheduledDate && (
+            <div className="detail-row">
+              <span className="label">Scheduled:</span>
+              <span className="value">
+                {new Date(transferData.scheduledDate).toLocaleDateString()}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="confirmation-actions">
+          <button
+            type="button"
+            onClick={() => setShowConfirmation(false)}
+            className="cancel-button"
+            disabled={isSubmitting}
+          >
+            Back to Edit
+          </button>
+          <button
+            type="button"
+            onClick={confirmTransfer}
+            className="confirm-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Processing...' : 'Confirm Transfer'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="secure-banking-form">
+      <div className="form-header">
+        <h2>Transfer Money</h2>
+        <div className="security-indicators">
+          <div className="ssl-indicator">🔒 Secure Connection</div>
+          {securityToken && (
+            <div className="token-indicator">✓ Security Token Active</div>
+          )}
+        </div>
+      </div>
+
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit(onFormSubmit)}
+        className={`transfer-form ${isLocked ? 'locked' : ''}`}
+        noValidate
+      >
+        {/* From Account */}
+        <div className="form-group">
+          <label htmlFor="fromAccount">From Account *</label>
+          <select
+            id="fromAccount"
+            {...register('fromAccount')}
+            className={errors.fromAccount ? 'error' : ''}
+            disabled={isSubmitting}
+          >
+            <option value="">Select source account...</option>
+            {userAccounts.map(account => (
+              <option key={account.id} value={account.id}>
+                {account.name} - ${account.balance.toLocaleString()} available
+              </option>
+            ))}
+          </select>
+          {errors.fromAccount && (
+            <span className="error-message" role="alert">
+              {errors.fromAccount.message}
+            </span>
+          )}
+        </div>
+
+        {/* To Account */}
+        <div className="form-group">
+          <label htmlFor="toAccount">To Account *</label>
+          <select
+            id="toAccount"
+            {...register('toAccount')}
+            className={errors.toAccount ? 'error' : ''}
+            disabled={isSubmitting}
+          >
+            <option value="">Select destination account...</option>
+            {userAccounts
+              .filter(account => account.id !== watchedFromAccount)
+              .map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.name} - ****{account.number.slice(-4)}
+                </option>
+              ))
+            }
+          </select>
+          {errors.toAccount && (
+            <span className="error-message" role="alert">
+              {errors.toAccount.message}
+            </span>
+          )}
+        </div>
+
+        {/* Amount */}
+        <div className="form-group">
+          <label htmlFor="amount">Amount *</label>
+          <div className="amount-input-container">
+            <span className="currency-symbol">$</span>
+            <input
+              ref={amountInputRef}
+              type="text"
+              id="amount"
+              {...register('amount')}
+              onChange={formatAmount}
+              placeholder="0.00"
+              className={errors.amount ? 'error' : ''}
+              disabled={isSubmitting}
+              autoComplete="off"
+              inputMode="decimal"
+            />
+          </div>
+
+          {/* Quick amount buttons */}
+          <div className="quick-amounts">
+            {[100, 250, 500, 1000].map(amount => (
+              <button
+                key={amount}
+                type="button"
+                onClick={() => setQuickAmount(amount)}
+                className="quick-amount-btn"
+                disabled={isSubmitting}
+              >
+                ${amount}
+              </button>
+            ))}
+          </div>
+
+          {errors.amount && (
+            <span className="error-message" role="alert">
+              {errors.amount.message}
+            </span>
+          )}
+        </div>
+
+        {/* Description */}
+        <div className="form-group">
+          <label htmlFor="description">Description *</label>
+          <input
+            type="text"
+            id="description"
+            {...register('description')}
+            onChange={(e) => {
+              const sanitized = sanitizeInput(e.target.value, 'description');
+              setValue('description', sanitized, { shouldValidate: true });
+            }}
+            placeholder="Enter transfer description"
+            className={errors.description ? 'error' : ''}
+            disabled={isSubmitting}
+            maxLength={100}
+          />
+          <div className="character-count">
+            {watch('description')?.length || 0}/100
+          </div>
+          {errors.description && (
+            <span className="error-message" role="alert">
+              {errors.description.message}
+            </span>
+          )}
+        </div>
+
+        {/* Purpose */}
+        <div className="form-group">
+          <label htmlFor="purpose">Purpose *</label>
+          <select
+            id="purpose"
+            {...register('purpose')}
+            className={errors.purpose ? 'error' : ''}
+            disabled={isSubmitting}
+          >
+            <option value="">Select purpose...</option>
+            <option value="personal">Personal</option>
+            <option value="business">Business</option>
+            <option value="family">Family</option>
+            <option value="bills">Bills & Utilities</option>
+            <option value="other">Other</option>
+          </select>
+          {errors.purpose && (
+            <span className="error-message" role="alert">
+              {errors.purpose.message}
+            </span>
+          )}
+        </div>
+
+        {/* Scheduled Date */}
+        <div className="form-group">
+          <label htmlFor="scheduledDate">Schedule Transfer (Optional)</label>
+          <input
+            type="date"
+            id="scheduledDate"
+            {...register('scheduledDate')}
+            min={new Date().toISOString().split('T')[0]}
+            max={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+            className={errors.scheduledDate ? 'error' : ''}
+            disabled={isSubmitting}
+          />
+          {errors.scheduledDate && (
+            <span className="error-message" role="alert">
+              {errors.scheduledDate.message}
+            </span>
+          )}
+        </div>
+
+        {/* Security PIN */}
+        <div className="form-group security-group">
+          <label htmlFor="authPin">Security PIN *</label>
+          <input
+            type="password"
+            id="authPin"
+            {...register('authPin')}
+            onChange={(e) => {
+              const sanitized = sanitizeInput(e.target.value, 'authPin');
+              setValue('authPin', sanitized, { shouldValidate: true });
+            }}
+            placeholder="Enter your 4-6 digit PIN"
+            className={errors.authPin ? 'error' : ''}
+            disabled={isSubmitting}
+            maxLength={6}
+            autoComplete="off"
+          />
+          {errors.authPin && (
+            <span className="error-message" role="alert">
+              {errors.authPin.message}
+            </span>
+          )}
+          <div className="security-note">
+            Your PIN is encrypted and never stored in our systems
+          </div>
+        </div>
+
+        {/* Attempts warning */}
+        {attempts > 0 && (
+          <div className="attempts-warning" role="alert">
+            Warning: {attempts}/3 failed attempts. Form will be locked after 3 attempts.
+          </div>
+        )}
+
+        {/* Lock message */}
+        {isLocked && (
+          <div className="lock-message" role="alert">
+            Form is temporarily locked due to multiple failed attempts.
+            Please wait 5 minutes before trying again.
+          </div>
+        )}
+
+        {/* Form Actions */}
+        <div className="form-actions">
+          <button
+            type="button"
+            onClick={() => {
+              reset();
+              sessionStorage.removeItem('transfer_draft');
+              onCancel?.();
+            }}
+            className="cancel-button"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="submit-button"
+            disabled={!isValid || isSubmitting || isLocked || !securityToken}
+          >
+            {isSubmitting ? 'Processing...' : 'Review Transfer'}
+          </button>
+        </div>
+
+        {/* Security footer */}
+        <div className="security-footer">
+          <p>
+            🔒 All transfers are encrypted and monitored for security.
+            You will receive confirmation via email and SMS.
+          </p>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default SecureBankingTransferForm;
+```
+
+---
+
+### Q47: Banking UI/UX Patterns
+
+**Question**: What are the key UI/UX patterns and design principles for banking applications in React?
+
+**Answer**:
+
+Banking applications require specific UI/UX patterns focused on trust, clarity, security, and accessibility.
+
+**Banking Design System Components:**
+
+```jsx
+// Core banking design tokens and components
+import React from 'react';
+import styled from 'styled-components';
+
+// Design tokens for banking applications
+export const BankingTheme = {
+  colors: {
+    primary: {
+      50: '#F0F9FF',
+      100: '#E0F2FE',
+      500: '#0EA5E9',
+      600: '#0284C7',
+      900: '#0C4A6E'
+    },
+    success: {
+      50: '#F0FDF4',
+      500: '#22C55E',
+      600: '#16A34A'
+    },
+    warning: {
+      50: '#FFFBEB',
+      500: '#F59E0B',
+      600: '#D97706'
+    },
+    error: {
+      50: '#FEF2F2',
+      500: '#EF4444',
+      600: '#DC2626'
+    },
+    neutral: {
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      500: '#6B7280',
+      700: '#374151',
+      900: '#111827'
+    }
+  },
+  typography: {
+    fontFamily: '"Inter", "Segoe UI", system-ui, sans-serif',
+    sizes: {
+      xs: '0.75rem',
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+      '2xl': '1.5rem',
+      '3xl': '1.875rem'
+    },
+    weights: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700
+    }
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+    '2xl': '3rem'
+  },
+  shadows: {
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+  }
+};
+
+// Currency display component with banking standards
+export const CurrencyDisplay = ({
+  amount,
+  currency = 'USD',
+  size = 'base',
+  variant = 'default',
+  showSign = true,
+  className = ''
+}) => {
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Math.abs(value));
+  };
+
+  const getColorClass = () => {
+    if (variant === 'positive' || amount > 0) return 'text-success-600';
+    if (variant === 'negative' || amount < 0) return 'text-error-600';
+    return 'text-neutral-900';
+  };
+
+  const getSizeClass = () => {
+    const sizeMap = {
+      xs: 'text-xs',
+      sm: 'text-sm',
+      base: 'text-base',
+      lg: 'text-lg',
+      xl: 'text-xl',
+      '2xl': 'text-2xl'
+    };
+    return sizeMap[size] || sizeMap.base;
+  };
+
+  return (
+    <span className={`font-medium tabular-nums ${getSizeClass()} ${getColorClass()} ${className}`}>
+      {showSign && amount !== 0 && (amount > 0 ? '+' : '-')}
+      {formatCurrency(amount)}
+    </span>
+  );
+};
+
+// Account card component with banking-specific patterns
+export const AccountCard = ({
+  account,
+  isSelected = false,
+  onClick,
+  showBalance = true,
+  variant = 'default'
+}) => {
+  const getAccountIcon = (type) => {
+    const icons = {
+      checking: '🏦',
+      savings: '💰',
+      credit: '💳',
+      investment: '📈',
+      loan: '🏠'
+    };
+    return icons[type] || '🏛️';
+  };
+
+  const getAccountTypeColor = (type) => {
+    const colors = {
+      checking: 'bg-blue-50 border-blue-200',
+      savings: 'bg-green-50 border-green-200',
+      credit: 'bg-purple-50 border-purple-200',
+      investment: 'bg-yellow-50 border-yellow-200',
+      loan: 'bg-red-50 border-red-200'
+    };
+    return colors[type] || 'bg-gray-50 border-gray-200';
+  };
+
+  return (
+    <div
+      className={`
+        relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
+        ${isSelected ? 'border-primary-500 bg-primary-50 shadow-md' : getAccountTypeColor(account.type)}
+        hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500
+        ${account.status !== 'active' ? 'opacity-60' : ''}
+      `}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      aria-pressed={isSelected}
+      aria-describedby={`account-${account.id}-description`}
+    >
+      {/* Account status indicator */}
+      {account.status !== 'active' && (
+        <div className="absolute top-2 right-2">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800">
+            {account.status}
+          </span>
+        </div>
+      )}
+
+      <div className="flex items-start justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="text-2xl">{getAccountIcon(account.type)}</div>
+          <div>
+            <h3 className="font-semibold text-neutral-900">{account.name}</h3>
+            <p className="text-sm text-neutral-500">
+              ****{account.number.slice(-4)}
+            </p>
+            <p className="text-xs text-neutral-400 capitalize">
+              {account.type} account
+            </p>
+          </div>
+        </div>
+
+        {showBalance && (
+          <div className="text-right">
+            <div className="text-xs text-neutral-500 mb-1">Available Balance</div>
+            <CurrencyDisplay
+              amount={account.availableBalance}
+              size="lg"
+              className="font-bold"
+            />
+            {account.pendingAmount > 0 && (
+              <div className="text-xs text-neutral-500 mt-1">
+                <CurrencyDisplay
+                  amount={account.pendingAmount}
+                  size="xs"
+                /> pending
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Account description for screen readers */}
+      <div id={`account-${account.id}-description`} className="sr-only">
+        {account.type} account {account.name} ending in {account.number.slice(-4)}
+        with available balance of {account.availableBalance}
+        {account.status !== 'active' && `. Account status: ${account.status}`}
+      </div>
+    </div>
+  );
+};
+
+// Transaction list with banking UX patterns
+export const TransactionList = ({ transactions, showAccountInfo = false }) => {
+  const groupTransactionsByDate = (transactions) => {
+    return transactions.reduce((groups, transaction) => {
+      const date = new Date(transaction.date).toDateString();
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(transaction);
+      return groups;
+    }, {});
+  };
+
+  const groupedTransactions = groupTransactionsByDate(transactions);
+
+  return (
+    <div className="transaction-list space-y-4">
+      {Object.entries(groupedTransactions).map(([date, dayTransactions]) => (
+        <div key={date} className="transaction-group">
+          <h3 className="text-sm font-medium text-neutral-700 mb-2 sticky top-0 bg-white py-1">
+            {new Date(date).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </h3>
+
+          <div className="space-y-2">
+            {dayTransactions.map((transaction) => (
+              <TransactionItem
+                key={transaction.id}
+                transaction={transaction}
+                showAccountInfo={showAccountInfo}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const TransactionItem = ({ transaction, showAccountInfo = false }) => {
+  const getTransactionIcon = (category) => {
+    const icons = {
+      'food': '🍽️',
+      'gas': '⛽',
+      'shopping': '🛍️',
+      'bills': '💡',
+      'transfer': '↔️',
+      'deposit': '💰',
+      'withdrawal': '💸',
+      'payment': '💳'
+    };
+    return icons[category] || '💰';
+  };
+
+  const isDebit = transaction.amount < 0;
+
+  return (
+    <div className="flex items-center p-3 bg-white rounded-lg border border-neutral-200 hover:border-neutral-300 transition-colors">
+      <div className="flex-shrink-0 mr-3">
+        <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-lg">
+          {getTransactionIcon(transaction.category)}
+        </div>
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className="font-medium text-neutral-900 truncate">
+              {transaction.description}
+            </p>
+            <div className="flex items-center space-x-2 mt-1">
+              <p className="text-sm text-neutral-500">
+                {new Date(transaction.date).toLocaleTimeString('en-US', {
+                  hour: 'numeric',
+                  minute: '2-digit'
+                })}
+              </p>
+              {showAccountInfo && (
+                <span className="text-xs text-neutral-400">
+                  • {transaction.accountName}
+                </span>
+              )}
+              {transaction.pending && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warning-100 text-warning-800">
+                  Pending
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-shrink-0 ml-4 text-right">
+            <CurrencyDisplay
+              amount={transaction.amount}
+              variant={isDebit ? 'negative' : 'positive'}
+              size="base"
+              className="font-semibold"
+            />
+            {transaction.category && (
+              <p className="text-xs text-neutral-500 mt-1 capitalize">
+                {transaction.category}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Status indicators with banking-appropriate styling
+export const StatusBadge = ({ status, size = 'base' }) => {
+  const getStatusConfig = (status) => {
+    const configs = {
+      active: {
+        color: 'bg-success-100 text-success-800',
+        icon: '✓',
+        label: 'Active'
+      },
+      pending: {
+        color: 'bg-warning-100 text-warning-800',
+        icon: '⏳',
+        label: 'Pending'
+      },
+      locked: {
+        color: 'bg-error-100 text-error-800',
+        icon: '🔒',
+        label: 'Locked'
+      },
+      closed: {
+        color: 'bg-neutral-100 text-neutral-800',
+        icon: '✗',
+        label: 'Closed'
+      },
+      processing: {
+        color: 'bg-blue-100 text-blue-800',
+        icon: '⚡',
+        label: 'Processing'
+      }
+    };
+    return configs[status] || configs.active;
+  };
+
+  const config = getStatusConfig(status);
+  const sizeClass = size === 'sm' ? 'px-2 py-1 text-xs' : 'px-3 py-1 text-sm';
+
+  return (
+    <span className={`inline-flex items-center rounded-full font-medium ${config.color} ${sizeClass}`}>
+      <span className="mr-1">{config.icon}</span>
+      {config.label}
+    </span>
+  );
+};
+
+export default {
+  BankingTheme,
+  CurrencyDisplay,
+  AccountCard,
+  TransactionList,
+  TransactionItem,
+  StatusBadge
+};
+```
+
+---
+
+### Q48: Accessibility in Banking Apps
+
+**Question**: How do you implement comprehensive accessibility features in React banking applications to meet WCAG guidelines?
+
+**Answer**:
+
+Banking applications must be accessible to all users, including those with disabilities, to comply with regulations like ADA and Section 508.
+
+**Accessible Banking Components:**
+
+```jsx
+import React, { useState, useRef, useEffect } from 'react';
+
+// Accessible form components for banking
+export const AccessibleBankingForm = () => {
+  const [formData, setFormData] = useState({
+    amount: '',
+    description: '',
+    toAccount: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [announcements, setAnnouncements] = useState('');
+
+  const amountRef = useRef(null);
+  const errorSummaryRef = useRef(null);
+
+  // ARIA live region for dynamic announcements
+  const announce = (message) => {
+    setAnnouncements(message);
+    setTimeout(() => setAnnouncements(''), 1000);
+  };
+
+  // Form validation with accessible error handling
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      newErrors.amount = 'Please enter a valid amount greater than zero';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'Please enter a description for this transfer';
+    }
+
+    if (!formData.toAccount) {
+      newErrors.toAccount = 'Please select a destination account';
+    }
+
+    setErrors(newErrors);
+
+    // Focus on first error and announce to screen readers
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorField = Object.keys(newErrors)[0];
+      const firstErrorElement = document.getElementById(firstErrorField);
+
+      if (firstErrorElement) {
+        firstErrorElement.focus();
+      }
+
+      // Move focus to error summary
+      if (errorSummaryRef.current) {
+        errorSummaryRef.current.focus();
+      }
+
+      announce(`Form has ${Object.keys(newErrors).length} errors. Please review and correct.`);
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      announce('Transfer request submitted successfully');
+      // Process form submission
+    }
+  };
+
+  return (
+    <div className="accessible-banking-form">
+      {/* Skip link for keyboard navigation */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
+      {/* ARIA live region for announcements */}
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        id="announcements"
+      >
+        {announcements}
+      </div>
+
+      {/* Error summary - appears when there are validation errors */}
+      {Object.keys(errors).length > 0 && (
+        <div
+          ref={errorSummaryRef}
+          className="error-summary"
+          role="alert"
+          aria-labelledby="error-summary-title"
+          tabIndex="-1"
+        >
+          <h2 id="error-summary-title" className="error-summary-title">
+            There are {Object.keys(errors).length} errors in this form
+          </h2>
+          <ul className="error-summary-list">
+            {Object.entries(errors).map(([field, message]) => (
+              <li key={field}>
+                <a
+                  href={`#${field}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(field)?.focus();
+                  }}
+                >
+                  {message}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} noValidate>
+        <fieldset>
+          <legend className="form-legend">Transfer Money</legend>
+
+          {/* Amount field with comprehensive accessibility */}
+          <div className="form-group">
+            <label htmlFor="amount" className="form-label">
+              Transfer Amount
+              <span className="required-indicator" aria-label="required">*</span>
+            </label>
+
+            <div className="input-wrapper">
+              <span className="input-prefix" aria-hidden="true">$</span>
+              <input
+                ref={amountRef}
+                type="text"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                className={`form-input ${errors.amount ? 'error' : ''}`}
+                placeholder="0.00"
+                aria-describedby={errors.amount ? 'amount-error amount-help' : 'amount-help'}
+                aria-invalid={errors.amount ? 'true' : 'false'}
+                aria-required="true"
+                inputMode="decimal"
+                autoComplete="off"
+              />
+            </div>
+
+            <div id="amount-help" className="form-help">
+              Enter the amount you want to transfer (maximum $10,000 per day)
+            </div>
+
+            {errors.amount && (
+              <div id="amount-error" className="error-message" role="alert">
+                <span className="error-icon" aria-hidden="true">⚠️</span>
+                {errors.amount}
+              </div>
+            )}
+          </div>
+
+          {/* Account selection with accessible combobox */}
+          <div className="form-group">
+            <label htmlFor="toAccount" className="form-label">
+              Transfer To
+              <span className="required-indicator" aria-label="required">*</span>
+            </label>
+
+            <select
+              id="toAccount"
+              name="toAccount"
+              value={formData.toAccount}
+              onChange={(e) => setFormData(prev => ({ ...prev, toAccount: e.target.value }))}
+              className={`form-select ${errors.toAccount ? 'error' : ''}`}
+              aria-describedby={errors.toAccount ? 'toAccount-error toAccount-help' : 'toAccount-help'}
+              aria-invalid={errors.toAccount ? 'true' : 'false'}
+              aria-required="true"
+            >
+              <option value="">Choose an account</option>
+              <option value="checking-001">
+                Checking Account ending in 001 - $5,234.56 available
+              </option>
+              <option value="savings-002">
+                Savings Account ending in 002 - $12,890.45 available
+              </option>
+            </select>
+
+            <div id="toAccount-help" className="form-help">
+              Select the account you want to transfer money to
+            </div>
+
+            {errors.toAccount && (
+              <div id="toAccount-error" className="error-message" role="alert">
+                <span className="error-icon" aria-hidden="true">⚠️</span>
+                {errors.toAccount}
+              </div>
+            )}
+          </div>
+
+          {/* Description field */}
+          <div className="form-group">
+            <label htmlFor="description" className="form-label">
+              Description
+              <span className="required-indicator" aria-label="required">*</span>
+            </label>
+
+            <input
+              type="text"
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              className={`form-input ${errors.description ? 'error' : ''}`}
+              placeholder="Enter transfer description"
+              aria-describedby={errors.description ? 'description-error description-help' : 'description-help'}
+              aria-invalid={errors.description ? 'true' : 'false'}
+              aria-required="true"
+              maxLength={100}
+            />
+
+            <div id="description-help" className="form-help">
+              Describe the purpose of this transfer (up to 100 characters)
+            </div>
+
+            {errors.description && (
+              <div id="description-error" className="error-message" role="alert">
+                <span className="error-icon" aria-hidden="true">⚠️</span>
+                {errors.description}
+              </div>
+            )}
+          </div>
+
+          {/* Submit button with loading state */}
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              aria-describedby="submit-help"
+            >
+              <span className="btn-text">Transfer Money</span>
+              <span className="sr-only">
+                Submit transfer for {formData.amount ? `$${formData.amount}` : 'entered amount'}
+              </span>
+            </button>
+
+            <div id="submit-help" className="form-help">
+              Review your transfer details before submitting
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  );
+};
+
+// Accessible data table for transaction history
+export const AccessibleTransactionTable = ({ transactions }) => {
+  const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const sortedTransactions = React.useMemo(() => {
+    let sortableTransactions = [...transactions];
+
+    if (sortConfig.key) {
+      sortableTransactions.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return sortableTransactions;
+  }, [transactions, sortConfig]);
+
+  const paginatedTransactions = sortedTransactions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(sortedTransactions.length / itemsPerPage);
+
+  const handleSort = (key) => {
+    setSortConfig(prevConfig => ({
+      key,
+      direction: prevConfig.key === key && prevConfig.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const getSortAriaLabel = (column) => {
+    if (sortConfig.key === column) {
+      return `Sort by ${column} ${sortConfig.direction === 'asc' ? 'descending' : 'ascending'}`;
+    }
+    return `Sort by ${column}`;
+  };
+
+  return (
+    <div className="accessible-table-container">
+      {/* Table summary and navigation info */}
+      <div className="table-info" aria-live="polite">
+        <p>
+          Showing {paginatedTransactions.length} of {sortedTransactions.length} transactions.
+          {sortConfig.key && (
+            <span> Sorted by {sortConfig.key} in {sortConfig.direction}ending order.</span>
+          )}
+        </p>
+      </div>
+
+      {/* Accessible table with proper headers and structure */}
+      <table
+        className="transaction-table"
+        role="table"
+        aria-label="Transaction history"
+        aria-describedby="table-info"
+      >
+        <caption className="sr-only">
+          Transaction history showing date, description, amount, and status.
+          Use arrow keys to navigate and Enter to sort columns.
+        </caption>
+
+        <thead>
+          <tr role="row">
+            <th
+              role="columnheader"
+              aria-sort={
+                sortConfig.key === 'date'
+                  ? sortConfig.direction === 'asc' ? 'ascending' : 'descending'
+                  : 'none'
+              }
+              tabIndex="0"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleSort('date');
+                }
+              }}
+              onClick={() => handleSort('date')}
+              aria-label={getSortAriaLabel('date')}
+              className="sortable-header"
+            >
+              Date
+              <span className="sort-indicator" aria-hidden="true">
+                {sortConfig.key === 'date' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              </span>
+            </th>
+
+            <th
+              role="columnheader"
+              aria-sort={
+                sortConfig.key === 'description'
+                  ? sortConfig.direction === 'asc' ? 'ascending' : 'descending'
+                  : 'none'
+              }
+              tabIndex="0"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleSort('description');
+                }
+              }}
+              onClick={() => handleSort('description')}
+              aria-label={getSortAriaLabel('description')}
+              className="sortable-header"
+            >
+              Description
+              <span className="sort-indicator" aria-hidden="true">
+                {sortConfig.key === 'description' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              </span>
+            </th>
+
+            <th
+              role="columnheader"
+              aria-sort={
+                sortConfig.key === 'amount'
+                  ? sortConfig.direction === 'asc' ? 'ascending' : 'descending'
+                  : 'none'
+              }
+              tabIndex="0"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleSort('amount');
+                }
+              }}
+              onClick={() => handleSort('amount')}
+              aria-label={getSortAriaLabel('amount')}
+              className="sortable-header amount-column"
+            >
+              Amount
+              <span className="sort-indicator" aria-hidden="true">
+                {sortConfig.key === 'amount' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+              </span>
+            </th>
+
+            <th role="columnheader">Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {paginatedTransactions.map((transaction, index) => (
+            <tr key={transaction.id} role="row">
+              <td role="gridcell">
+                <time dateTime={transaction.date}>
+                  {new Date(transaction.date).toLocaleDateString()}
+                </time>
+              </td>
+
+              <td role="gridcell">
+                {transaction.description}
+              </td>
+
+              <td role="gridcell" className="amount-cell">
+                <span className={`amount ${transaction.amount < 0 ? 'debit' : 'credit'}`}>
+                  {transaction.amount < 0 ? '-' : '+'}
+                  ${Math.abs(transaction.amount).toFixed(2)}
+                </span>
+              </td>
+
+              <td role="gridcell">
+                <span
+                  className={`status-badge ${transaction.status}`}
+                  aria-label={`Transaction status: ${transaction.status}`}
+                >
+                  {transaction.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Accessible pagination */}
+      <nav aria-label="Transaction pagination" className="pagination-nav">
+        <ul className="pagination" role="list">
+          <li>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              aria-label="Go to previous page"
+              className="pagination-btn"
+            >
+              Previous
+            </button>
+          </li>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <li key={page}>
+              <button
+                onClick={() => setCurrentPage(page)}
+                aria-label={`Go to page ${page}`}
+                aria-current={currentPage === page ? 'page' : undefined}
+                className={`pagination-btn ${currentPage === page ? 'current' : ''}`}
+              >
+                {page}
+              </button>
+            </li>
+          ))}
+
+          <li>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              aria-label="Go to next page"
+              className="pagination-btn"
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+
+        <div className="pagination-info" aria-live="polite">
+          Page {currentPage} of {totalPages}
+        </div>
+      </nav>
+    </div>
+  );
+};
+
+// High contrast mode toggle for accessibility
+export const HighContrastToggle = () => {
+  const [isHighContrast, setIsHighContrast] = useState(false);
+
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('highContrast') === 'true';
+    setIsHighContrast(savedPreference);
+
+    if (savedPreference) {
+      document.body.classList.add('high-contrast');
+    }
+  }, []);
+
+  const toggleHighContrast = () => {
+    const newValue = !isHighContrast;
+    setIsHighContrast(newValue);
+    localStorage.setItem('highContrast', newValue.toString());
+
+    if (newValue) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+  };
+
+  return (
+    <button
+      onClick={toggleHighContrast}
+      className="high-contrast-toggle"
+      aria-label={`${isHighContrast ? 'Disable' : 'Enable'} high contrast mode`}
+      aria-pressed={isHighContrast}
+    >
+      <span className="toggle-icon" aria-hidden="true">
+        {isHighContrast ? '🌙' : '☀️'}
+      </span>
+      <span className="toggle-text">
+        {isHighContrast ? 'Standard' : 'High'} Contrast
+      </span>
+    </button>
+  );
+};
+
+export default {
+  AccessibleBankingForm,
+  AccessibleTransactionTable,
+  HighContrastToggle
+};
+```
+
+---
+
+### Q49: Progressive Web App Features
+
+**Question**: How do you implement Progressive Web App features for banking applications using React?
+
+**Answer**:
+
+PWA features enable banking apps to work offline, send push notifications, and provide app-like experiences.
+
+**Banking PWA Implementation:**
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+// Service Worker registration and management
+export const useServiceWorker = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [swRegistration, setSwRegistration] = useState(null);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
+  useEffect(() => {
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
+      })
+      .then(registration => {
+        setSwRegistration(registration);
+
+        // Check for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              setUpdateAvailable(true);
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Service Worker registration failed:', error);
+      });
+    }
+
+    // Online/offline status
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const updateServiceWorker = () => {
+    if (swRegistration?.waiting) {
+      swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      window.location.reload();
+    }
+  };
+
+  return {
+    isOnline,
+    updateAvailable,
+    updateServiceWorker,
+    swRegistration
+  };
+};
+
+// Offline banking component with cached data
+export const OfflineBankingDashboard = () => {
+  const [cachedData, setCachedData] = useState(null);
+  const [syncQueue, setSyncQueue] = useState([]);
+  const { isOnline, updateAvailable, updateServiceWorker } = useServiceWorker();
+
+  useEffect(() => {
+    // Load cached data when offline
+    if (!isOnline) {
+      loadCachedData();
+    }
+
+    // Sync queued actions when online
+    if (isOnline && syncQueue.length > 0) {
+      syncQueuedActions();
+    }
+  }, [isOnline, syncQueue]);
+
+  const loadCachedData = async () => {
+    try {
+      const cache = await caches.open('banking-data-v1');
+      const cachedResponse = await cache.match('/api/dashboard');
+
+      if (cachedResponse) {
+        const data = await cachedResponse.json();
+        setCachedData(data);
+      }
+    } catch (error) {
+      console.error('Failed to load cached data:', error);
+    }
+  };
+
+  const syncQueuedActions = async () => {
+    try {
+      for (const action of syncQueue) {
+        await fetch(action.url, {
+          method: action.method,
+          headers: action.headers,
+          body: action.body
+        });
+      }
+
+      setSyncQueue([]);
+
+      // Show success notification
+      if ('serviceWorker' in navigator && 'Notification' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification('Banking App', {
+            body: 'Your pending transactions have been synced.',
+            icon: '/icons/icon-192x192.png',
+            badge: '/icons/badge-72x72.png',
+            tag: 'sync-complete'
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Failed to sync queued actions:', error);
+    }
+  };
+
+  const addToSyncQueue = (action) => {
+    setSyncQueue(prev => [...prev, action]);
+
+    // Store in IndexedDB for persistence
+    if ('indexedDB' in window) {
+      const request = indexedDB.open('BankingOfflineDB', 1);
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['syncQueue'], 'readwrite');
+        const store = transaction.objectStore('syncQueue');
+        store.add(action);
+      };
+    }
+  };
+
+  const handleOfflineTransfer = (transferData) => {
+    // Add to sync queue for when online
+    addToSyncQueue({
+      url: '/api/transfers',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      },
+      body: JSON.stringify(transferData)
+    });
+
+    // Show offline confirmation
+    alert('Transfer queued. It will be processed when you\'re back online.');
+  };
+
+  return (
+    <div className="offline-banking-dashboard">
+      {/* Update notification */}
+      {updateAvailable && (
+        <div className="update-notification" role="alert">
+          <p>A new version of the app is available.</p>
+          <button onClick={updateServiceWorker}>Update Now</button>
+        </div>
+      )}
+
+      {/* Offline indicator */}
+      {!isOnline && (
+        <div className="offline-indicator" role="alert">
+          <span className="offline-icon">📶</span>
+          <span>You're offline. Using cached data.</span>
+          {syncQueue.length > 0 && (
+            <span className="sync-count">
+              {syncQueue.length} action(s) pending sync
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Cached account data */}
+      {cachedData && (
+        <div className="cached-data-warning">
+          <p>⚠️ Showing cached data from {new Date(cachedData.lastUpdated).toLocaleString()}</p>
+        </div>
+      )}
+
+      {/* Banking dashboard content */}
+      <div className="dashboard-content">
+        {/* Account balances (cached or live) */}
+        <div className="account-balances">
+          {(cachedData?.accounts || []).map(account => (
+            <div key={account.id} className="account-card offline">
+              <h3>{account.name}</h3>
+              <p className="balance">${account.balance.toLocaleString()}</p>
+              <p className="last-updated">
+                Last updated: {new Date(account.lastUpdated).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Offline transaction form */}
+        <div className="offline-transfer-form">
+          <h3>Quick Transfer {!isOnline && '(Offline)'}</h3>
+          <p>Transfers will be processed when you're back online.</p>
+
+          <button
+            onClick={() => handleOfflineTransfer({
+              amount: 100,
+              description: 'Quick transfer',
+              toAccount: 'savings'
+            })}
+            disabled={!isOnline}
+            className="offline-transfer-btn"
+          >
+            {isOnline ? 'Transfer $100' : 'Queue Transfer (Offline)'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Push notification management for banking alerts
+export const usePushNotifications = () => {
+  const [permission, setPermission] = useState(Notification.permission);
+  const [subscription, setSubscription] = useState(null);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.pushManager.getSubscription().then(sub => {
+          setSubscription(sub);
+        });
+      });
+    }
+  }, []);
+
+  const requestPermission = async () => {
+    if ('Notification' in window) {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      return result;
+    }
+  };
+
+  const subscribeToPush = async () => {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      const registration = await navigator.serviceWorker.ready;
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY' // Replace with your VAPID key
+      });
+
+      setSubscription(subscription);
+
+      // Send subscription to server
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify(subscription)
+      });
+
+      return subscription;
+    }
+  };
+
+  const unsubscribeFromPush = async () => {
+    if (subscription) {
+      await subscription.unsubscribe();
+      setSubscription(null);
+
+      // Notify server
+      await fetch('/api/push/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify(subscription)
+      });
+    }
+  };
+
+  return {
+    permission,
+    subscription,
+    requestPermission,
+    subscribeToPush,
+    unsubscribeFromPush
+  };
+};
+
+// Banking notification preferences component
+export const NotificationSettings = () => {
+  const { permission, subscription, requestPermission, subscribeToPush, unsubscribeFromPush } = usePushNotifications();
+  const [preferences, setPreferences] = useState({
+    accountAlerts: true,
+    transactionNotifications: true,
+    securityAlerts: true,
+    balanceReminders: false,
+    promotionalOffers: false
+  });
+
+  const handlePermissionRequest = async () => {
+    const result = await requestPermission();
+    if (result === 'granted') {
+      await subscribeToPush();
+    }
+  };
+
+  const handlePreferenceChange = async (preference, enabled) => {
+    const newPreferences = { ...preferences, [preference]: enabled };
+    setPreferences(newPreferences);
+
+    // Save preferences to server
+    await fetch('/api/user/notification-preferences', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      },
+      body: JSON.stringify(newPreferences)
+    });
+  };
+
+  return (
+    <div className="notification-settings">
+      <h2>Notification Settings</h2>
+
+      <div className="permission-status">
+        <h3>Push Notification Permission</h3>
+        <p>Status: {permission}</p>
+
+        {permission === 'default' && (
+          <button onClick={handlePermissionRequest} className="enable-notifications-btn">
+            Enable Push Notifications
+          </button>
+        )}
+
+        {permission === 'granted' && !subscription && (
+          <button onClick={subscribeToPush} className="subscribe-btn">
+            Subscribe to Notifications
+          </button>
+        )}
+
+        {subscription && (
+          <button onClick={unsubscribeFromPush} className="unsubscribe-btn">
+            Disable Push Notifications
+          </button>
+        )}
+      </div>
+
+      <div className="notification-preferences">
+        <h3>Notification Types</h3>
+
+        {Object.entries(preferences).map(([key, enabled]) => (
+          <label key={key} className="preference-item">
+            <input
+              type="checkbox"
+              checked={enabled}
+              onChange={(e) => handlePreferenceChange(key, e.target.checked)}
+              disabled={!subscription}
+            />
+            <span className="preference-label">
+              {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+            </span>
+          </label>
+        ))}
+      </div>
+
+      <div className="notification-examples">
+        <h3>Example Notifications</h3>
+        <ul>
+          <li>💰 Large deposit received in your checking account</li>
+          <li>🔒 Login from new device detected</li>
+          <li>💳 Credit card payment due in 3 days</li>
+          <li>📊 Monthly account statement is ready</li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+// PWA install prompt
+export const PWAInstallPrompt = () => {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      }
+
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    }
+  };
+
+  if (!showInstallPrompt) {
+    return null;
+  }
+
+  return (
+    <div className="pwa-install-prompt">
+      <div className="install-prompt-content">
+        <h3>Install Banking App</h3>
+        <p>Get quick access to your accounts with our app.</p>
+        <ul>
+          <li>✓ Work offline with cached data</li>
+          <li>✓ Receive push notifications for important alerts</li>
+          <li>✓ Quick access from your home screen</li>
+          <li>✓ Enhanced security features</li>
+        </ul>
+
+        <div className="install-actions">
+          <button onClick={handleInstallClick} className="install-btn">
+            Install App
+          </button>
+          <button onClick={() => setShowInstallPrompt(false)} className="dismiss-btn">
+            Not Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default {
+  useServiceWorker,
+  OfflineBankingDashboard,
+  usePushNotifications,
+  NotificationSettings,
+  PWAInstallPrompt
+};
+```
+
+---
+
+## Summary
+
+This comprehensive React guide covers:
+
+- **React Fundamentals** (4 questions): Core concepts, components, state, events
+- **React Hooks** (5 questions): useEffect, useContext, useReducer, custom hooks, optimization
+- **Advanced Patterns** (4 questions): HOCs, render props, compound components, error boundaries
+- **State Management** (4 questions): Redux, RTK, Zustand, React Query
+- **Routing & Navigation** (3 questions): React Router, protected routes, dynamic routing
+- **Forms & Validation** (3 questions): React Hook Form, validation, file uploads
+- **API Integration** (4 questions): HTTP clients, error handling, auth, WebSockets
+- **Testing Strategies** (4 questions): Unit testing, integration, E2E, mocking
+- **Performance** (4 questions): Optimization, code splitting, bundle analysis, virtual scrolling
+- **Full-Stack Integration** (4 questions): Spring Boot integration, JWT, dashboards, microservices
+- **Modern Ecosystem** (4 questions): Next.js, TypeScript, styling, build tools
+- **Banking-Specific Patterns** (6 questions): Financial visualizations, real-time updates, secure forms, UI/UX, accessibility, PWA
+
+**Total: 49 detailed React interview questions** focused specifically on React development with comprehensive banking examples and production-ready patterns for financial services applications.
