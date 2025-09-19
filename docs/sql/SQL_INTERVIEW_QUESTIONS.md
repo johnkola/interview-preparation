@@ -5,10 +5,11 @@
 2. [Joins and Relationships](#joins-and-relationships)
 3. [Aggregations and Grouping](#aggregations-and-grouping)
 4. [Window Functions](#window-functions)
-5. [Performance Optimization](#performance-optimization)
-6. [Transaction Management](#transaction-management)
-7. [Banking-Specific Scenarios](#banking-specific-scenarios)
-8. [Advanced Topics](#advanced-topics)
+5. [Pagination Techniques](#pagination-techniques)
+6. [Performance Optimization](#performance-optimization)
+7. [Transaction Management](#transaction-management)
+8. [Banking-Specific Scenarios](#banking-specific-scenarios)
+9. [Advanced Topics](#advanced-topics)
 
 ---
 
@@ -414,9 +415,661 @@ ORDER BY account_id, rn;
 
 ---
 
+## Pagination Techniques
+
+### 14. OFFSET-FETCH Pagination (SQL Server 2012+, PostgreSQL)
+
+**Question:** Implement pagination for transaction history with 20 records per page.
+
+```sql
+-- Basic OFFSET-FETCH pagination (SQL Server 2012+)
+-- Page 1 (records 1-20)
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC, transaction_id DESC
+OFFSET 0 ROWS
+FETCH NEXT 20 ROWS ONLY;
+
+-- Page 2 (records 21-40)
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC, transaction_id DESC
+OFFSET 20 ROWS
+FETCH NEXT 20 ROWS ONLY;
+
+-- Dynamic pagination with parameters
+DECLARE @PageNumber INT = 3;
+DECLARE @PageSize INT = 20;
+DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC, transaction_id DESC
+OFFSET @Offset ROWS
+FETCH NEXT @PageSize ROWS ONLY;
+
+-- PostgreSQL syntax (similar but uses LIMIT)
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = 12345
+ORDER BY transaction_date DESC, transaction_id DESC
+LIMIT 20 OFFSET 40; -- Page 3
+```
+
+### 15. ROW_NUMBER() Pagination (All SQL versions)
+
+**Question:** Implement pagination that works across all SQL database versions.
+
+```sql
+-- Using ROW_NUMBER() - works in SQL Server 2005+, Oracle, PostgreSQL
+WITH PaginatedTransactions AS (
+    SELECT
+        transaction_id,
+        account_id,
+        transaction_date,
+        transaction_type,
+        amount,
+        description,
+        ROW_NUMBER() OVER (
+            ORDER BY transaction_date DESC, transaction_id DESC
+        ) AS RowNum
+    FROM transactions
+    WHERE account_id = @AccountId
+)
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM PaginatedTransactions
+WHERE RowNum BETWEEN 41 AND 60; -- Page 3 (20 records per page)
+
+-- More flexible version with total count
+DECLARE @PageNumber INT = 3;
+DECLARE @PageSize INT = 20;
+DECLARE @StartRow INT = (@PageNumber - 1) * @PageSize + 1;
+DECLARE @EndRow INT = @PageNumber * @PageSize;
+
+WITH PaginatedData AS (
+    SELECT
+        transaction_id,
+        account_id,
+        transaction_date,
+        transaction_type,
+        amount,
+        description,
+        ROW_NUMBER() OVER (
+            ORDER BY transaction_date DESC, transaction_id DESC
+        ) AS RowNum,
+        COUNT(*) OVER() AS TotalCount
+    FROM transactions
+    WHERE account_id = @AccountId
+)
+SELECT
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description,
+    RowNum,
+    TotalCount,
+    CEILING(CAST(TotalCount AS FLOAT) / @PageSize) AS TotalPages,
+    @PageNumber AS CurrentPage
+FROM PaginatedData
+WHERE RowNum BETWEEN @StartRow AND @EndRow;
+```
+
+### 16. Keyset Pagination (Seek Method) - Most Efficient
+
+**Question:** Implement the most efficient pagination method for large datasets.
+
+```sql
+-- Keyset pagination - best performance for large datasets
+-- Uses the last record from previous page as starting point
+
+-- First page (no previous record)
+SELECT TOP 20
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC, transaction_id DESC;
+
+-- Next pages (using last record from previous page)
+-- Assume last record from previous page had:
+-- transaction_date = '2024-01-15 14:30:00' and transaction_id = 'TXN123456'
+
+SELECT TOP 20
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description
+FROM transactions
+WHERE account_id = @AccountId
+    AND (
+        transaction_date < '2024-01-15 14:30:00'
+        OR (transaction_date = '2024-01-15 14:30:00' AND transaction_id < 'TXN123456')
+    )
+ORDER BY transaction_date DESC, transaction_id DESC;
+
+-- Stored procedure for keyset pagination
+CREATE PROCEDURE sp_GetTransactionsPaginated
+    @AccountId INT,
+    @PageSize INT = 20,
+    @LastTransactionDate DATETIME2 = NULL,
+    @LastTransactionId VARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @LastTransactionDate IS NULL OR @LastTransactionId IS NULL
+    BEGIN
+        -- First page
+        SELECT TOP (@PageSize)
+            transaction_id,
+            account_id,
+            transaction_date,
+            transaction_type,
+            amount,
+            description,
+            balance_after
+        FROM transactions
+        WHERE account_id = @AccountId
+        ORDER BY transaction_date DESC, transaction_id DESC;
+    END
+    ELSE
+    BEGIN
+        -- Subsequent pages
+        SELECT TOP (@PageSize)
+            transaction_id,
+            account_id,
+            transaction_date,
+            transaction_type,
+            amount,
+            description,
+            balance_after
+        FROM transactions
+        WHERE account_id = @AccountId
+            AND (
+                transaction_date < @LastTransactionDate
+                OR (transaction_date = @LastTransactionDate AND transaction_id < @LastTransactionId)
+            )
+        ORDER BY transaction_date DESC, transaction_id DESC;
+    END
+END;
+GO
+```
+
+### 17. Pagination with Total Count and Metadata
+
+**Question:** Create a comprehensive pagination solution with metadata for UI display.
+
+```sql
+-- Comprehensive pagination with all metadata needed for UI
+CREATE PROCEDURE sp_GetAccountTransactionsWithPaging
+    @AccountId INT,
+    @PageNumber INT = 1,
+    @PageSize INT = 20,
+    @SortColumn VARCHAR(50) = 'transaction_date',
+    @SortDirection VARCHAR(4) = 'DESC',
+    @FilterType VARCHAR(20) = NULL,
+    @StartDate DATE = NULL,
+    @EndDate DATE = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validate inputs
+    IF @PageNumber < 1 SET @PageNumber = 1;
+    IF @PageSize < 1 SET @PageSize = 20;
+    IF @PageSize > 100 SET @PageSize = 100; -- Max limit
+
+    DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+    DECLARE @TotalRecords INT;
+    DECLARE @FilteredRecords INT;
+
+    -- Get total count (all records)
+    SELECT @TotalRecords = COUNT(*)
+    FROM transactions
+    WHERE account_id = @AccountId;
+
+    -- Build dynamic query for flexibility
+    DECLARE @SQL NVARCHAR(MAX);
+    DECLARE @CountSQL NVARCHAR(MAX);
+    DECLARE @WhereClause NVARCHAR(MAX) = ' WHERE account_id = @AccountId ';
+
+    -- Add filters
+    IF @FilterType IS NOT NULL
+        SET @WhereClause = @WhereClause + ' AND transaction_type = @FilterType ';
+
+    IF @StartDate IS NOT NULL
+        SET @WhereClause = @WhereClause + ' AND transaction_date >= @StartDate ';
+
+    IF @EndDate IS NOT NULL
+        SET @WhereClause = @WhereClause + ' AND transaction_date <= @EndDate ';
+
+    -- Get filtered count
+    SET @CountSQL = 'SELECT @FilteredRecords = COUNT(*) FROM transactions ' + @WhereClause;
+
+    EXEC sp_executesql @CountSQL,
+        N'@AccountId INT, @FilterType VARCHAR(20), @StartDate DATE, @EndDate DATE, @FilteredRecords INT OUTPUT',
+        @AccountId, @FilterType, @StartDate, @EndDate, @FilteredRecords OUTPUT;
+
+    -- Build main query with pagination
+    SET @SQL = '
+    WITH PaginatedData AS (
+        SELECT
+            transaction_id,
+            account_id,
+            transaction_date,
+            transaction_type,
+            amount,
+            description,
+            balance_after,
+            ROW_NUMBER() OVER (ORDER BY ' +
+            QUOTENAME(@SortColumn) + ' ' + @SortDirection +
+            ', transaction_id DESC) AS RowNum
+        FROM transactions ' +
+        @WhereClause + '
+    )
+    SELECT
+        transaction_id,
+        account_id,
+        transaction_date,
+        transaction_type,
+        amount,
+        description,
+        balance_after,
+        @PageNumber AS CurrentPage,
+        @PageSize AS PageSize,
+        @FilteredRecords AS FilteredCount,
+        @TotalRecords AS TotalCount,
+        CEILING(CAST(@FilteredRecords AS FLOAT) / @PageSize) AS TotalPages,
+        CASE
+            WHEN @PageNumber > 1 THEN 1
+            ELSE 0
+        END AS HasPreviousPage,
+        CASE
+            WHEN @PageNumber < CEILING(CAST(@FilteredRecords AS FLOAT) / @PageSize) THEN 1
+            ELSE 0
+        END AS HasNextPage
+    FROM PaginatedData
+    WHERE RowNum BETWEEN @Offset + 1 AND @Offset + @PageSize
+    ORDER BY RowNum';
+
+    EXEC sp_executesql @SQL,
+        N'@AccountId INT, @FilterType VARCHAR(20), @StartDate DATE, @EndDate DATE,
+          @PageNumber INT, @PageSize INT, @Offset INT,
+          @FilteredRecords INT, @TotalRecords INT',
+        @AccountId, @FilterType, @StartDate, @EndDate,
+        @PageNumber, @PageSize, @Offset,
+        @FilteredRecords, @TotalRecords;
+END;
+GO
+
+-- Usage examples:
+-- Get first page
+EXEC sp_GetAccountTransactionsWithPaging @AccountId = 12345;
+
+-- Get page 3 with 50 records per page
+EXEC sp_GetAccountTransactionsWithPaging
+    @AccountId = 12345,
+    @PageNumber = 3,
+    @PageSize = 50;
+
+-- Get filtered and sorted results
+EXEC sp_GetAccountTransactionsWithPaging
+    @AccountId = 12345,
+    @PageNumber = 1,
+    @PageSize = 20,
+    @SortColumn = 'amount',
+    @SortDirection = 'DESC',
+    @FilterType = 'DEBIT',
+    @StartDate = '2024-01-01',
+    @EndDate = '2024-01-31';
+```
+
+### 18. Infinite Scroll Pagination (Cursor-based)
+
+**Question:** Implement pagination for infinite scroll in a mobile banking app.
+
+```sql
+-- Cursor-based pagination for infinite scroll
+-- Better than offset for real-time data that changes frequently
+
+-- Initial load (no cursor)
+SELECT TOP 20
+    transaction_id,
+    account_id,
+    transaction_date,
+    transaction_type,
+    amount,
+    description,
+    -- Create cursor for next page
+    CONCAT(
+        FORMAT(transaction_date, 'yyyy-MM-dd HH:mm:ss.fffffff'),
+        '|',
+        transaction_id
+    ) AS next_cursor
+FROM transactions
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC, transaction_id DESC;
+
+-- Load more (with cursor from last item)
+CREATE PROCEDURE sp_GetTransactionsInfiniteScroll
+    @AccountId INT,
+    @Cursor NVARCHAR(100) = NULL,
+    @Limit INT = 20
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @CursorDate DATETIME2;
+    DECLARE @CursorId VARCHAR(50);
+
+    IF @Cursor IS NOT NULL
+    BEGIN
+        -- Parse cursor
+        DECLARE @PipeIndex INT = CHARINDEX('|', @Cursor);
+        SET @CursorDate = CAST(LEFT(@Cursor, @PipeIndex - 1) AS DATETIME2);
+        SET @CursorId = RIGHT(@Cursor, LEN(@Cursor) - @PipeIndex);
+
+        -- Get next batch after cursor
+        SELECT TOP (@Limit)
+            transaction_id,
+            account_id,
+            transaction_date,
+            transaction_type,
+            amount,
+            description,
+            CONCAT(
+                FORMAT(transaction_date, 'yyyy-MM-dd HH:mm:ss.fffffff'),
+                '|',
+                transaction_id
+            ) AS next_cursor
+        FROM transactions
+        WHERE account_id = @AccountId
+            AND (
+                transaction_date < @CursorDate
+                OR (transaction_date = @CursorDate AND transaction_id < @CursorId)
+            )
+        ORDER BY transaction_date DESC, transaction_id DESC;
+    END
+    ELSE
+    BEGIN
+        -- Initial load
+        SELECT TOP (@Limit)
+            transaction_id,
+            account_id,
+            transaction_date,
+            transaction_type,
+            amount,
+            description,
+            CONCAT(
+                FORMAT(transaction_date, 'yyyy-MM-dd HH:mm:ss.fffffff'),
+                '|',
+                transaction_id
+            ) AS next_cursor
+        FROM transactions
+        WHERE account_id = @AccountId
+        ORDER BY transaction_date DESC, transaction_id DESC;
+    END
+END;
+GO
+```
+
+### 19. Pagination Performance Comparison
+
+**Question:** Compare performance of different pagination methods.
+
+```sql
+-- Performance comparison setup
+CREATE TABLE pagination_performance_test (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    test_data VARCHAR(100),
+    created_date DATETIME2,
+    amount DECIMAL(10,2),
+    INDEX IX_created_date (created_date DESC, id DESC)
+);
+
+-- Insert test data (1 million rows)
+WITH Numbers AS (
+    SELECT TOP 1000000 ROW_NUMBER() OVER (ORDER BY a.object_id) AS n
+    FROM sys.objects a, sys.objects b, sys.objects c
+)
+INSERT INTO pagination_performance_test (test_data, created_date, amount)
+SELECT
+    'Test Data ' + CAST(n AS VARCHAR(10)),
+    DATEADD(SECOND, -n, GETDATE()),
+    CAST(RAND(CHECKSUM(NEWID())) * 10000 AS DECIMAL(10,2))
+FROM Numbers;
+
+-- Test 1: OFFSET-FETCH (gets slower with higher page numbers)
+SET STATISTICS TIME ON;
+SET STATISTICS IO ON;
+
+-- Page 1 (fast)
+SELECT id, test_data, created_date, amount
+FROM pagination_performance_test
+ORDER BY created_date DESC, id DESC
+OFFSET 0 ROWS
+FETCH NEXT 20 ROWS ONLY;
+
+-- Page 10000 (slower - has to skip 199,980 rows)
+SELECT id, test_data, created_date, amount
+FROM pagination_performance_test
+ORDER BY created_date DESC, id DESC
+OFFSET 199980 ROWS
+FETCH NEXT 20 ROWS ONLY;
+
+-- Test 2: ROW_NUMBER() (similar performance issues)
+WITH Paged AS (
+    SELECT
+        id, test_data, created_date, amount,
+        ROW_NUMBER() OVER (ORDER BY created_date DESC, id DESC) AS rn
+    FROM pagination_performance_test
+)
+SELECT id, test_data, created_date, amount
+FROM Paged
+WHERE rn BETWEEN 199981 AND 200000;
+
+-- Test 3: Keyset pagination (consistently fast)
+-- First page
+SELECT TOP 20 id, test_data, created_date, amount
+FROM pagination_performance_test
+ORDER BY created_date DESC, id DESC;
+
+-- Page 10000 (still fast - uses index seek)
+DECLARE @LastDate DATETIME2 = '2024-01-01 10:30:00';
+DECLARE @LastId INT = 800000;
+
+SELECT TOP 20 id, test_data, created_date, amount
+FROM pagination_performance_test
+WHERE created_date < @LastDate
+   OR (created_date = @LastDate AND id < @LastId)
+ORDER BY created_date DESC, id DESC;
+
+SET STATISTICS TIME OFF;
+SET STATISTICS IO OFF;
+
+-- Results Summary:
+-- Method              | Page 1   | Page 10000 | Consistency
+-- -------------------|----------|------------|-------------
+-- OFFSET-FETCH       | Fast     | Slow       | Degrades
+-- ROW_NUMBER()       | Fast     | Slow       | Degrades
+-- Keyset Pagination  | Fast     | Fast       | Consistent
+```
+
+### 20. Best Practices and Common Pitfalls
+
+**Question:** What are the best practices for implementing pagination in production?
+
+```sql
+-- BEST PRACTICES:
+
+-- 1. Always include ORDER BY with unique columns to ensure consistent results
+-- BAD: Results may vary between pages
+SELECT * FROM transactions
+OFFSET 20 ROWS FETCH NEXT 20 ROWS ONLY;
+
+-- GOOD: Consistent ordering
+SELECT * FROM transactions
+ORDER BY transaction_date DESC, transaction_id DESC
+OFFSET 20 ROWS FETCH NEXT 20 ROWS ONLY;
+
+-- 2. Use appropriate indexes for pagination queries
+CREATE INDEX IX_transactions_pagination
+ON transactions(account_id, transaction_date DESC, transaction_id DESC)
+INCLUDE (transaction_type, amount, description);
+
+-- 3. Implement reasonable page size limits
+CREATE PROCEDURE sp_GetPagedResults
+    @PageSize INT = 20
+AS
+BEGIN
+    -- Validate and limit page size
+    IF @PageSize IS NULL OR @PageSize < 1
+        SET @PageSize = 20;
+    IF @PageSize > 100  -- Maximum allowed
+        SET @PageSize = 100;
+
+    -- Rest of pagination logic
+END;
+
+-- 4. Handle edge cases properly
+CREATE PROCEDURE sp_SafePagination
+    @PageNumber INT,
+    @PageSize INT
+AS
+BEGIN
+    DECLARE @TotalRecords INT;
+    DECLARE @MaxPage INT;
+
+    SELECT @TotalRecords = COUNT(*) FROM transactions;
+    SET @MaxPage = CEILING(CAST(@TotalRecords AS FLOAT) / @PageSize);
+
+    -- Handle invalid page numbers
+    IF @PageNumber < 1
+        SET @PageNumber = 1;
+    IF @PageNumber > @MaxPage
+        SET @PageNumber = @MaxPage;
+
+    -- Return empty result set for no data
+    IF @TotalRecords = 0
+    BEGIN
+        SELECT
+            NULL AS transaction_id,
+            0 AS CurrentPage,
+            0 AS TotalPages,
+            0 AS TotalRecords
+        WHERE 1 = 0;
+        RETURN;
+    END
+
+    -- Normal pagination logic here
+END;
+
+-- 5. Consider caching for frequently accessed pages
+CREATE TABLE pagination_cache (
+    cache_key VARCHAR(100) PRIMARY KEY,
+    cached_data NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT GETDATE(),
+    expires_at DATETIME2
+);
+
+-- 6. Use read replicas for pagination queries when possible
+-- This reduces load on primary database
+SELECT * FROM transactions WITH (NOLOCK)  -- Use carefully!
+WHERE account_id = @AccountId
+ORDER BY transaction_date DESC
+OFFSET 40 ROWS FETCH NEXT 20 ROWS ONLY;
+
+-- 7. Implement query timeout for pagination
+BEGIN TRY
+    -- Set query timeout (in seconds)
+    SET LOCK_TIMEOUT 5000;
+
+    SELECT * FROM transactions
+    ORDER BY transaction_date DESC
+    OFFSET 1000000 ROWS FETCH NEXT 20 ROWS ONLY;
+END TRY
+BEGIN CATCH
+    IF ERROR_NUMBER() = 1222  -- Lock timeout
+    BEGIN
+        -- Return error or default result
+        SELECT 'Pagination timeout' AS ErrorMessage;
+    END
+END CATCH;
+
+-- COMMON PITFALLS TO AVOID:
+
+-- 1. Don't use OFFSET for real-time data without considering data changes
+-- Data might be inserted/deleted between page loads
+
+-- 2. Don't forget about SQL injection when building dynamic queries
+-- Always use parameterized queries
+
+-- 3. Don't load unnecessary columns for count queries
+-- BAD:
+SELECT COUNT(*) FROM (
+    SELECT * FROM transactions
+    WHERE account_id = @AccountId
+) t;
+
+-- GOOD:
+SELECT COUNT(*) FROM transactions
+WHERE account_id = @AccountId;
+
+-- 4. Don't ignore the impact of sorting on performance
+-- Complex ORDER BY clauses can be expensive
+
+-- 5. Consider the user experience
+-- Provide "Jump to page" functionality for large datasets
+-- Show loading indicators for slow queries
+-- Implement virtual scrolling for very large lists
+```
+
+---
+
 ## Performance Optimization
 
-### 14. Optimizing Slow Queries with Indexes
+### 21. Optimizing Slow Queries with Indexes
 
 **Question:** How would you optimize this slow query?
 
@@ -480,7 +1133,7 @@ SET STATISTICS IO OFF;
 SET STATISTICS TIME OFF;
 ```
 
-### 15. Query Plan Analysis
+### 22. Query Plan Analysis
 
 **Question:** How to analyze and improve query performance?
 
@@ -524,7 +1177,7 @@ ORDER BY improvement_measure DESC;
 
 ## Transaction Management
 
-### 16. Implementing Safe Money Transfer
+### 23. Implementing Safe Money Transfer
 
 **Question:** Write a stored procedure for safe money transfer between accounts.
 
@@ -644,7 +1297,7 @@ END;
 GO
 ```
 
-### 17. Deadlock Prevention and Handling
+### 24. Deadlock Prevention and Handling
 
 **Question:** How to prevent and handle deadlocks in banking transactions?
 
@@ -734,7 +1387,7 @@ ORDER BY deadlock_time DESC;
 
 ## Banking-Specific Scenarios
 
-### 18. Calculate Interest for Savings Accounts
+### 25. Calculate Interest for Savings Accounts
 
 **Question:** Calculate compound interest for all savings accounts.
 
@@ -804,7 +1457,7 @@ END;
 GO
 ```
 
-### 19. Fraud Detection Query
+### 26. Fraud Detection Query
 
 **Question:** Identify potentially fraudulent transactions.
 
@@ -892,7 +1545,7 @@ ORDER BY
     tp.transaction_date DESC;
 ```
 
-### 20. Customer Lifetime Value Calculation
+### 27. Customer Lifetime Value Calculation
 
 **Question:** Calculate customer lifetime value based on banking activities.
 
@@ -975,7 +1628,7 @@ ORDER BY current_clv DESC;
 
 ## Advanced Topics
 
-### 21. Recursive CTE for Account Hierarchy
+### 28. Recursive CTE for Account Hierarchy
 
 **Question:** Find all related accounts in a corporate structure.
 
@@ -1021,7 +1674,7 @@ FROM AccountHierarchy ah
 ORDER BY path;
 ```
 
-### 22. Pivot for Monthly Revenue Report
+### 29. Pivot for Monthly Revenue Report
 
 **Question:** Create a monthly revenue pivot report.
 
@@ -1066,7 +1719,7 @@ ORDER BY total_revenue DESC';
 EXEC sp_executesql @sql;
 ```
 
-### 23. JSON Operations (SQL Server 2016+)
+### 30. JSON Operations (SQL Server 2016+)
 
 **Question:** Store and query transaction metadata in JSON format.
 
@@ -1126,7 +1779,7 @@ CROSS APPLY OPENJSON(metadata, '$.merchant')
     ) as merchant;
 ```
 
-### 24. Temporal Tables (SQL Server 2016+)
+### 31. Temporal Tables (SQL Server 2016+)
 
 **Question:** Implement audit trail using temporal tables.
 
@@ -1184,7 +1837,7 @@ HAVING COUNT(*) > 1
 ORDER BY change_count DESC;
 ```
 
-### 25. Common Table Expressions (CTEs) vs Subqueries vs Temp Tables
+### 32. Common Table Expressions (CTEs) vs Subqueries vs Temp Tables
 
 **Question:** When to use CTEs, subqueries, or temp tables?
 
