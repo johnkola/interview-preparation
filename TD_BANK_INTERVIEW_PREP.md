@@ -17,6 +17,7 @@
 - **[Security Deep Dive](docs/security/SECURITY_DEEP_DIVE.md)** - OAuth 2.0, LDAP, SSO, and MFA implementations
 - **[Azure Services Guide](docs/azure/AZURE_SERVICES_GUIDE.md)** - App Service, Functions, and cloud integration
 - **[Microservices Communication](docs/microservices/MICROSERVICES_COMMUNICATION_COMPREHENSIVE.md)** - Event-driven architecture and resilience patterns
+- **[SQL Interview Questions](docs/sql/SQL_INTERVIEW_QUESTIONS.md)** - Comprehensive SQL questions with banking-specific examples
 
 ### Common References
 - **[Banking Domain Model](docs/common/BANKING_DOMAIN_MODEL.md)** - Standardized banking entities, services, and patterns used across all guides
