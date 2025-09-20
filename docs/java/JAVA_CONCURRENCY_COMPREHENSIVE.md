@@ -218,111 +218,15 @@ public class ThreadLifecycleDemo {
 
 ### Thread Safety Fundamentals
 
-```java
-public class ThreadSafetyExample {
+*📋 **Note:** For comprehensive thread safety concepts, counter examples, and thread-safe vs non-thread-safe comparisons, see: `JAVA_THREAD_SAFETY_BEST_PRACTICES.md`*
 
-    // Unsafe counter - Race condition prone
-    static class UnsafeCounter {
-        private int count = 0;
+**Quick Overview:** Thread safety ensures that shared data remains consistent when accessed by multiple threads simultaneously. Key approaches:
 
-        public void increment() {
-            count++; // Not atomic: read -> modify -> write
-        }
+- **Synchronization**: Using `synchronized` keyword for mutual exclusion
+- **Atomic Operations**: Using `AtomicXxx` classes for lock-free operations
+- **Immutable Objects**: Objects whose state cannot change after creation
+- **Thread Confinement**: Restricting access to single threads
 
-        public int getCount() {
-            return count;
-        }
-    }
-
-    // Thread-safe counter using synchronization
-    static class SafeCounter {
-        private int count = 0;
-
-        public synchronized void increment() {
-            count++;
-        }
-
-        public synchronized int getCount() {
-            return count;
-        }
-    }
-
-    // Atomic counter - Lock-free thread safety
-    static class AtomicCounter {
-        private final AtomicInteger count = new AtomicInteger(0);
-
-        public void increment() {
-            count.incrementAndGet();
-        }
-
-        public int getCount() {
-            return count.get();
-        }
-    }
-
-    public static void demonstrateThreadSafety() {
-        final int THREAD_COUNT = 10;
-        final int INCREMENTS_PER_THREAD = 1000;
-
-        // Test unsafe counter
-        UnsafeCounter unsafeCounter = new UnsafeCounter();
-        testCounter("Unsafe Counter", unsafeCounter::increment,
-                   unsafeCounter::getCount, THREAD_COUNT, INCREMENTS_PER_THREAD);
-
-        // Test safe counter
-        SafeCounter safeCounter = new SafeCounter();
-        testCounter("Safe Counter", safeCounter::increment,
-                   safeCounter::getCount, THREAD_COUNT, INCREMENTS_PER_THREAD);
-
-        // Test atomic counter
-        AtomicCounter atomicCounter = new AtomicCounter();
-        testCounter("Atomic Counter", atomicCounter::increment,
-                   atomicCounter::getCount, THREAD_COUNT, INCREMENTS_PER_THREAD);
-    }
-
-    private static void testCounter(String name, Runnable incrementOp,
-                                  Supplier<Integer> getCountOp,
-                                  int threadCount, int incrementsPerThread) {
-
-        System.out.println("\nTesting " + name + ":");
-
-        Thread[] threads = new Thread[threadCount];
-
-        for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(() -> {
-                for (int j = 0; j < incrementsPerThread; j++) {
-                    incrementOp.run();
-                }
-            });
-        }
-
-        long startTime = System.currentTimeMillis();
-
-        // Start all threads
-        for (Thread thread : threads) {
-            thread.start();
-        }
-
-        // Wait for all threads to complete
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        long endTime = System.currentTimeMillis();
-        int finalCount = getCountOp.get();
-        int expectedCount = threadCount * incrementsPerThread;
-
-        System.out.println("Expected: " + expectedCount +
-                          ", Actual: " + finalCount +
-                          ", Time: " + (endTime - startTime) + "ms");
-        System.out.println("Correct: " + (finalCount == expectedCount));
-    }
-}
-```
 
 ---
 
@@ -2333,56 +2237,68 @@ parallelExecutor.submit(() -> processTransactions());
 parallelExecutor.submit(() -> generateReports());
 ```
 
-#### Q2: Explain the difference between synchronized methods and synchronized blocks.
+#### Q2: How do you choose between different synchronization mechanisms for high-concurrency scenarios?
 
-**Answer:**
+*📋 **Note:** For basic synchronized methods vs blocks explanations, see: `JAVA_THREAD_SAFETY_BEST_PRACTICES.md`*
+
+**Answer:** Choose synchronization mechanisms based on performance and concurrency requirements:
 
 ```java
-public class SynchronizationComparison {
-    private final Object lock1 = new Object();
-    private final Object lock2 = new Object();
-    private int balance = 1000;
+public class AdvancedSynchronizationChoices {
 
-    // Synchronized method - locks entire method on 'this' object
-    public synchronized void deposit(int amount) {
-        balance += amount; // Only one thread can execute this method at a time
-    }
+    // 1. ReentrantLock for advanced features
+    private final ReentrantLock advancedLock = new ReentrantLock(true); // Fair lock
 
-    // Synchronized block - more granular control
-    public void withdraw(int amount) {
-        // Non-critical code can run concurrently
-        validateAmount(amount);
-
-        synchronized(this) {
-            // Only this section is synchronized
-            if (balance >= amount) {
-                balance -= amount;
+    public boolean tryToProcess() {
+        if (advancedLock.tryLock(1, TimeUnit.SECONDS)) {
+            try {
+                // Process with timeout capability
+                return true;
+            } finally {
+                advancedLock.unlock();
             }
         }
-
-        // More non-critical code
-        logTransaction(amount);
+        return false; // Couldn't acquire lock
     }
 
-    // Multiple locks for different operations
-    public void transferFunds(int amount) {
-        synchronized(lock1) {
-            // Balance operations
-            balance -= amount;
-        }
+    // 2. ReadWriteLock for read-heavy scenarios
+    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
-        synchronized(lock2) {
-            // Audit operations
-            recordTransfer(amount);
+    public String readData() {
+        rwLock.readLock().lock();
+        try {
+            // Multiple readers can access concurrently
+            return data;
+        } finally {
+            rwLock.readLock().unlock();
         }
+    }
+
+    // 3. StampedLock for even better read performance (Java 8+)
+    private final StampedLock stampedLock = new StampedLock();
+
+    public String optimisticRead() {
+        long stamp = stampedLock.tryOptimisticRead();
+        String result = data; // Read data
+        if (!stampedLock.validate(stamp)) {
+            // Fallback to pessimistic read
+            stamp = stampedLock.readLock();
+            try {
+                result = data;
+            } finally {
+                stampedLock.unlockRead(stamp);
+            }
+        }
+        return result;
     }
 }
 ```
 
-**Key Differences:**
-- **Synchronized methods** lock the entire method using the object's intrinsic lock
-- **Synchronized blocks** provide more granular control and can use custom locks
-- **Performance**: Blocks can be more efficient by reducing lock contention
+**Selection Guide:**
+- **Synchronized**: Basic scenarios, built-in JVM support
+- **ReentrantLock**: Need timeouts, fair scheduling, or condition variables
+- **ReadWriteLock**: Read-heavy workloads (10:1 read/write ratio or higher)
+- **StampedLock**: Extremely read-heavy workloads, lowest overhead
 
 #### Q3: What are the different types of locks in Java and when would you use each?
 
