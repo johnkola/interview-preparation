@@ -3879,4 +3879,483 @@ public class SchedulerDifference {
 
 ---
 
+## 🔄 **RxJava vs Project Reactor Comparison**
+
+### **Key Differences**
+
+```java
+// RxJava approach
+import io.reactivex.rxjava3.core.*;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
+public class RxJavaExample {
+    // Single values
+    public Single<String> rxJavaExample() {
+        return Single.fromCallable(() -> "Hello RxJava")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation());
+    }
+
+    // Streams
+    public Observable<Integer> rxJavaStream() {
+        return Observable.range(1, 10)
+                        .filter(i -> i % 2 == 0)
+                        .map(i -> i * 2)
+                        .subscribeOn(Schedulers.io());
+    }
+
+    // Error handling
+    public Observable<String> rxJavaErrorHandling() {
+        return Observable.just("data")
+                        .map(this::processData)
+                        .onErrorReturn("fallback")
+                        .retry(3);
+    }
+}
+
+// Project Reactor equivalent
+import reactor.core.publisher.*;
+import reactor.core.scheduler.Schedulers;
+
+public class ReactorExample {
+    // Single values
+    public Mono<String> reactorExample() {
+        return Mono.fromCallable(() -> "Hello Reactor")
+                  .subscribeOn(Schedulers.boundedElastic())
+                  .publishOn(Schedulers.parallel());
+    }
+
+    // Streams
+    public Flux<Integer> reactorStream() {
+        return Flux.range(1, 10)
+                  .filter(i -> i % 2 == 0)
+                  .map(i -> i * 2)
+                  .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    // Error handling
+    public Flux<String> reactorErrorHandling() {
+        return Flux.just("data")
+                  .map(this::processData)
+                  .onErrorReturn("fallback")
+                  .retry(3);
+    }
+}
+
+// Comparison table:
+/*
+| Feature          | RxJava                    | Project Reactor           |
+|------------------|---------------------------|---------------------------|
+| Single Value     | Single<T>                | Mono<T>                   |
+| Multiple Values  | Observable<T>            | Flux<T>                   |
+| Completable      | Completable              | Mono<Void>                |
+| Maybe            | Maybe<T>                 | Mono<T> (can be empty)    |
+| Schedulers       | Schedulers.io()          | Schedulers.boundedElastic |
+| Testing          | TestObserver             | StepVerifier              |
+| Android Support  | Yes (RxAndroid)          | No                        |
+| Spring Support   | Limited                  | Full integration          |
+| Performance      | Good                     | Optimized for Spring      |
+*/
+```
+
+### **Migration Guide: RxJava to Project Reactor**
+
+```java
+public class MigrationExamples {
+
+    // RxJava -> Reactor mapping
+    public void migrationExamples() {
+        // Single -> Mono
+        Single<String> rxSingle = Single.just("value");
+        Mono<String> reactorMono = Mono.just("value");
+
+        // Observable -> Flux
+        Observable<Integer> rxObservable = Observable.range(1, 5);
+        Flux<Integer> reactorFlux = Flux.range(1, 5);
+
+        // Completable -> Mono<Void>
+        Completable rxCompletable = Completable.complete();
+        Mono<Void> reactorComplete = Mono.empty();
+
+        // Maybe -> Mono (nullable)
+        Maybe<String> rxMaybe = Maybe.just("maybe");
+        Mono<String> reactorMaybe = Mono.justOrEmpty("maybe");
+    }
+
+    // Scheduler mapping
+    public void schedulerMigration() {
+        // RxJava schedulers
+        Observable.just("data")
+                 .subscribeOn(Schedulers.io())           // -> Schedulers.boundedElastic()
+                 .observeOn(Schedulers.computation());   // -> Schedulers.parallel()
+
+        // Reactor equivalent
+        Flux.just("data")
+           .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic())
+           .publishOn(reactor.core.scheduler.Schedulers.parallel());
+    }
+}
+```
+
+---
+
+## 🔐 **Reactive Security**
+
+### **Spring Security with WebFlux**
+
+```java
+@Configuration
+@EnableWebFluxSecurity
+public class ReactiveSecurityConfig {
+
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+            .authorizeExchange(exchanges -> exchanges
+                .pathMatchers("/public/**").permitAll()
+                .pathMatchers("/admin/**").hasRole("ADMIN")
+                .pathMatchers("/api/**").authenticated()
+                .anyExchange().denyAll()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtDecoder(jwtDecoder()))
+            )
+            .csrf().disable()
+            .build();
+    }
+
+    @Bean
+    public ReactiveJwtDecoder jwtDecoder() {
+        return ReactiveJwtDecoders.fromIssuerLocation("https://issuer.example.com");
+    }
+}
+
+// Reactive authentication
+@RestController
+public class ReactiveAuthController {
+
+    @Autowired
+    private ReactiveUserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/login")
+    public Mono<ResponseEntity<JwtResponse>> login(@RequestBody LoginRequest request) {
+        return userDetailsService.findByUsername(request.getUsername())
+            .cast(UserDetails.class)
+            .filter(user -> passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            .map(this::generateToken)
+            .map(token -> ResponseEntity.ok(new JwtResponse(token)))
+            .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    @GetMapping("/me")
+    public Mono<UserInfo> getCurrentUser(Authentication authentication) {
+        return Mono.just(authentication)
+            .map(auth -> new UserInfo(auth.getName(), auth.getAuthorities()));
+    }
+
+    private String generateToken(UserDetails user) {
+        // JWT token generation logic
+        return "jwt-token";
+    }
+}
+
+// Method-level security
+@Service
+public class ReactiveSecureService {
+
+    @PreAuthorize("hasRole('USER')")
+    public Mono<String> secureMethod() {
+        return Mono.just("Secure data");
+    }
+
+    @PostAuthorize("returnObject.username == authentication.name")
+    public Mono<UserData> getUserData(String userId) {
+        return userRepository.findById(userId);
+    }
+
+    // Custom security context
+    public Mono<String> withSecurityContext() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getName)
+            .flatMap(username -> processForUser(username));
+    }
+
+    private Mono<String> processForUser(String username) {
+        return Mono.just("Processed for: " + username);
+    }
+}
+```
+
+### **Custom Authentication**
+
+```java
+@Component
+public class CustomReactiveAuthenticationManager implements ReactiveAuthenticationManager {
+
+    @Override
+    public Mono<Authentication> authenticate(Authentication authentication) {
+        String token = authentication.getCredentials().toString();
+
+        return validateToken(token)
+            .filter(valid -> valid)
+            .map(valid -> createAuthentication(token))
+            .cast(Authentication.class);
+    }
+
+    private Mono<Boolean> validateToken(String token) {
+        // Async token validation
+        return webClient.post()
+            .uri("/validate-token")
+            .bodyValue(new TokenRequest(token))
+            .retrieve()
+            .bodyToMono(TokenResponse.class)
+            .map(TokenResponse::isValid)
+            .onErrorReturn(false);
+    }
+
+    private Authentication createAuthentication(String token) {
+        Collection<GrantedAuthority> authorities = extractAuthorities(token);
+        return new JwtAuthenticationToken(token, authorities);
+    }
+}
+
+// Security filters
+@Component
+public class JwtAuthenticationWebFilter implements WebFilter {
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        String token = extractToken(exchange.getRequest());
+
+        if (token != null) {
+            return authenticateToken(token)
+                .flatMap(auth -> chain.filter(exchange)
+                    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth)))
+                .onErrorResume(ex -> chain.filter(exchange));
+        }
+
+        return chain.filter(exchange);
+    }
+
+    private String extractToken(ServerHttpRequest request) {
+        String bearerToken = request.getHeaders().getFirst("Authorization");
+        return (bearerToken != null && bearerToken.startsWith("Bearer "))
+            ? bearerToken.substring(7) : null;
+    }
+
+    private Mono<Authentication> authenticateToken(String token) {
+        // Token authentication logic
+        return Mono.just(new JwtAuthenticationToken(token));
+    }
+}
+```
+
+---
+
+## ⚡ **Advanced Backpressure Scenarios**
+
+### **Complex Backpressure Handling**
+
+```java
+public class AdvancedBackpressureExamples {
+
+    // Producer faster than consumer
+    public void fastProducerSlowConsumer() {
+        Flux.interval(Duration.ofMillis(1))        // Fast producer (1000/sec)
+            .onBackpressureBuffer(1000,            // Buffer up to 1000 items
+                BufferOverflowStrategy.DROP_OLDEST) // Drop oldest when full
+            .delayElements(Duration.ofMillis(100))  // Slow consumer (10/sec)
+            .subscribe(
+                item -> System.out.println("Processed: " + item),
+                error -> System.err.println("Error: " + error),
+                () -> System.out.println("Complete")
+            );
+    }
+
+    // Custom backpressure strategy
+    public Flux<String> customBackpressureStrategy() {
+        return Flux.<String>create(sink -> {
+            // Simulate fast data source
+            for (int i = 0; i < 1000000; i++) {
+                if (sink.requestedFromDownstream() > 0) {
+                    sink.next("Item " + i);
+                } else {
+                    // Handle backpressure - pause, buffer, or drop
+                    try {
+                        Thread.sleep(10); // Slow down production
+                    } catch (InterruptedException e) {
+                        sink.error(e);
+                        return;
+                    }
+                }
+            }
+            sink.complete();
+        }, FluxSink.OverflowStrategy.BUFFER);
+    }
+
+    // Adaptive backpressure
+    public Flux<ProcessedData> adaptiveBackpressure(Flux<RawData> source) {
+        return source
+            .onBackpressureLatest()                    // Keep only latest
+            .window(Duration.ofSeconds(1))             // Time-based windows
+            .flatMap(window -> window
+                .collectList()
+                .filter(list -> !list.isEmpty())
+                .map(this::processBatch)               // Process in batches
+            )
+            .onBackpressureDrop(item ->
+                log.warn("Dropped item due to backpressure: {}", item));
+    }
+
+    // Backpressure with different strategies per scenario
+    public Flux<String> conditionalBackpressure(Flux<String> source) {
+        return source
+            .transform(flux -> {
+                if (isHighLoad()) {
+                    return flux.onBackpressureDrop();     // Drop under high load
+                } else if (isMemoryConstrained()) {
+                    return flux.onBackpressureLatest();   // Keep latest only
+                } else {
+                    return flux.onBackpressureBuffer(10000); // Buffer normally
+                }
+            });
+    }
+
+    // Dynamic backpressure adjustment
+    public Flux<String> dynamicBackpressure(Flux<String> source) {
+        AtomicLong processedCount = new AtomicLong(0);
+        AtomicLong droppedCount = new AtomicLong(0);
+
+        return source
+            .doOnNext(item -> processedCount.incrementAndGet())
+            .transform(flux -> {
+                return Flux.interval(Duration.ofSeconds(5))
+                    .withLatestFrom(flux, (tick, item) -> {
+                        double dropRate = droppedCount.get() / (double) processedCount.get();
+
+                        if (dropRate > 0.1) { // 10% drop rate
+                            // Increase buffer or reduce production
+                            return flux.onBackpressureBuffer(20000);
+                        } else {
+                            return flux.onBackpressureBuffer(1000);
+                        }
+                    })
+                    .flatMap(f -> f);
+            })
+            .doOnDiscard(String.class, item -> droppedCount.incrementAndGet());
+    }
+
+    // Reactive circuit breaker with backpressure
+    public Flux<String> circuitBreakerWithBackpressure(Flux<String> source) {
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+            .failureRateThreshold(50)
+            .waitDurationInOpenState(Duration.ofSeconds(30))
+            .build();
+
+        CircuitBreaker circuitBreaker = CircuitBreaker.of("serviceCall", config);
+
+        return source
+            .onBackpressureBuffer(1000, BufferOverflowStrategy.DROP_LATEST)
+            .transformDeferred(ReactorCircuitBreaker.transientErrors(circuitBreaker))
+            .onErrorResume(CallNotPermittedException.class,
+                ex -> Flux.empty()) // Circuit open, skip processing
+            .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)));
+    }
+
+    // Memory-aware backpressure
+    public Flux<LargeObject> memoryAwareBackpressure(Flux<LargeObject> source) {
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+
+        return source
+            .filter(item -> {
+                MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+                double memoryUtilization = (double) heapUsage.getUsed() / heapUsage.getMax();
+
+                if (memoryUtilization > 0.8) { // 80% memory usage
+                    log.warn("High memory usage, dropping item");
+                    return false;
+                }
+                return true;
+            })
+            .onBackpressureBuffer(
+                100,
+                item -> estimateMemorySize(item) < availableMemory(),
+                BufferOverflowStrategy.DROP_OLDEST
+            );
+    }
+
+    private ProcessedData processBatch(List<RawData> batch) {
+        return new ProcessedData(batch.size());
+    }
+
+    private boolean isHighLoad() {
+        return Runtime.getRuntime().availableProcessors() > 8;
+    }
+
+    private boolean isMemoryConstrained() {
+        MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
+        return memory.getHeapMemoryUsage().getUsed() >
+               memory.getHeapMemoryUsage().getMax() * 0.8;
+    }
+
+    private long estimateMemorySize(LargeObject obj) {
+        // Estimate object memory footprint
+        return 1024; // Simplified
+    }
+
+    private long availableMemory() {
+        MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
+        return memory.getHeapMemoryUsage().getMax() -
+               memory.getHeapMemoryUsage().getUsed();
+    }
+}
+
+// Advanced backpressure monitoring
+@Component
+public class BackpressureMonitor {
+
+    private final MeterRegistry meterRegistry;
+    private final Counter droppedItems;
+    private final Gauge bufferSize;
+
+    public BackpressureMonitor(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        this.droppedItems = Counter.builder("reactive.backpressure.dropped")
+            .description("Number of items dropped due to backpressure")
+            .register(meterRegistry);
+
+        this.bufferSize = Gauge.builder("reactive.backpressure.buffer.size")
+            .description("Current buffer size")
+            .register(meterRegistry, this, BackpressureMonitor::getCurrentBufferSize);
+    }
+
+    public <T> Flux<T> monitorBackpressure(Flux<T> source, String streamName) {
+        return source
+            .doOnDiscard(Object.class, item -> {
+                droppedItems.increment(
+                    Tags.of(Tag.of("stream", streamName),
+                           Tag.of("reason", "backpressure"))
+                );
+            })
+            .doOnNext(item -> {
+                Timer.Sample sample = Timer.start(meterRegistry);
+                sample.stop(Timer.builder("reactive.processing.time")
+                    .tag("stream", streamName)
+                    .register(meterRegistry));
+            });
+    }
+
+    private double getCurrentBufferSize() {
+        // Implementation to get current buffer size
+        return 0.0;
+    }
+}
+```
+
+---
+
 *This comprehensive guide covers reactive programming with Spring WebFlux for technical interviews, providing practical examples and real-world scenarios.*
